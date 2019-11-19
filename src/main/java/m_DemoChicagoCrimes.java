@@ -32,8 +32,9 @@ public class m_DemoChicagoCrimes {
 
 
         try {
-
-//            example for an API all expecting a Json Array as a response ------
+// *************************************************************************************************************
+//            **************
+//            example for an API all expecting a Json Array as a response
 
 //            JSONArray jsonArr = m_APITalker.getArrayResponse(jsonUrl);
 //            System.out.println("This is the response\n\t" + jsonArr);
@@ -43,11 +44,22 @@ public class m_DemoChicagoCrimes {
 //            System.out.println(jarr);
 
 
-//            example for an API all expecting a Json Object as a response ------
+//            **************
+//            example for an API all expecting a Json Object as a response
 
 //            JSONObject jsonObj = m_APITalker.getObjectResponse(query_url, false);
 //            System.out.println("This is the response\n\t" + jsonObj);
 
+// *************************************************************************************************************
+
+//          TODO: TEST FOR GETTING THE URL GIVEN THE ADDRESS FROM USER INPUT
+
+
+
+
+
+
+//          TEST FOR GETTING THE LAT AND LONG GIVEN THE JSON RESPONSE
             JSONObject jobj = m_APITalker.getJsonFromString(getFakeJsonString(), new JSONObject(), false);
 //            System.out.println(jobj);
             System.out.println();
