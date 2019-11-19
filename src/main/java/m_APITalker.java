@@ -1,3 +1,4 @@
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
@@ -13,34 +14,34 @@ import java.net.UnknownHostException;
 import java.util.Map;
 
 public class m_APITalker {
-    public static JSONObject makeRequestResponse(String query_url) throws MalformedURLException, UnknownHostException, IOException, ParseException{
+    public static JSONObject getObjectResponse(String query_url) throws MalformedURLException, UnknownHostException, IOException, ParseException{
 
-            JSONObject json = getJsonObject(query_url);
-//            System.out.println("\tjson.get(\"status\"):\t"+json.get("status"));
-            System.out.println("\tresult as Map<String,JSONValue>:\n\t" + getJSONFromAPIResponse(json));
+            JSONObject json = getJson(query_url, new JSONObject());
             System.out.println("\t********************************************** - debug ends\n");
             return json;
 
     }
 
+    public static JSONArray getArrayResponse(String query_url) throws MalformedURLException, UnknownHostException, IOException, ParseException{
 
-    private static JSONObject getJsonObject(String query_url) throws  ParseException, IOException {
+            JSONArray json = getJson(query_url, new JSONArray());
+            System.out.println("\t********************************************** - debug ends\n");
+            return json;
+
+    }
+
+    private static <E> E getJson(String query_url, E json) throws  ParseException, IOException {
+//        converts the string json response into a json object or array, depending on the E type
         String result = APIRequestAsString(query_url);
 
         JSONParser parser = new JSONParser();
-        JSONObject json = (JSONObject) parser.parse(result);
-        System.out.println("\ttype of json:\t" + json.getClass());
-        System.out.println();
-        return json;
-    }
+        Object obj = parser.parse(result);
 
+        @SuppressWarnings("There will only be JsonObject or JsonArray Types")
+        E castedJson = (E) obj;
 
-    private static Map<String, JSONValue> getJSONFromAPIResponse(JSONObject js) {
-
-        System.out.println("\tresult as JSONObject:\n\t" + js+"\n");
-//      (Map<String,JSONValue>) js;
-
-        return (Map<String,JSONValue>)js;
+        System.out.println("\ttype of response:\t"+castedJson);
+         return castedJson;
     }
 
     private static String APIRequestAsString(String raw_url) throws UnknownHostException, MalformedURLException, IOException{

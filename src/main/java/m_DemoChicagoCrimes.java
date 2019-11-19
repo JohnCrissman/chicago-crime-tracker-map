@@ -13,16 +13,28 @@ public class m_DemoChicagoCrimes {
         System.out.println("Hello from Mari Demo");
 
         //        url that is going to be queried
+        String base = "https://geocoder.api.here.com/6.2/geocode.json?";
+        String apiHereKey = "app_id=kWDa074FyNMh0xqkXKFB";
+        String apiHereCode = "app_code=mN0YqfpiVu6jmm0I0uzZlA";
+        String searchText = "searchtext=425+W+Randolph+Chicago";
+
         String address = "1600+Amphitheatre+Parkway,+Mountain+View,+CA";
         String apiKey = "AIzaSyCn_pLa9MetQ-5wn4ygQNChNq48j0bMo04";
         String query_url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=" + apiKey;
-        System.out.println(query_url);
+
+        String jsonUrl = "https://data.cityofchicago.org/resource/crimes.json";
+
+
+        System.out.println(jsonUrl);
 
         try {
 
-            JSONObject json = m_APITalker.makeRequestResponse(query_url);
-            System.out.println("This is the response\n" + json);
-//            Do something with the json
+            JSONObject jsonObj = m_APITalker.getObjectResponse(query_url);
+            System.out.println("This is the response\n\t" + jsonObj);
+
+            JSONArray jsonArr = m_APITalker.getArrayResponse(jsonUrl);
+            System.out.println("This is the response\n\t" + jsonArr);
+
 
         }
         catch(MalformedURLException e){
