@@ -29,11 +29,12 @@ public class m_DemoChicagoCrimes {
 
         try {
 
-            JSONObject jsonObj = m_APITalker.getObjectResponse(query_url);
+            JSONObject jsonObj = m_APITalker.getObjectResponse(query_url, false);
             System.out.println("This is the response\n\t" + jsonObj);
 
-            JSONArray jsonArr = m_APITalker.getArrayResponse(jsonUrl);
-            System.out.println("This is the response\n\t" + jsonArr);
+//            example for an API all expecting a Json Array as a response
+//            JSONArray jsonArr = m_APITalker.getArrayResponse(jsonUrl);
+//            System.out.println("This is the response\n\t" + jsonArr);
 
 
         }
