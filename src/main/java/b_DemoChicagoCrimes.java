@@ -1,6 +1,10 @@
-public class b_DemoChicagoCrimes {
+import javafx.application.Application;
+import javafx.stage.Stage;
 
-    public static void main(String[] args) {
-        System.out.println("Hi beth.. welcome to test your findings here");
+public class b_DemoChicagoCrimes extends Application {
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+
     }
 }

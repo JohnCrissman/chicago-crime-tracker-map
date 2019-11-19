@@ -1,6 +1,19 @@
 plugins {
     id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
 }
+
+allprojects {
+    wrapper {
+        gradleVersion = '5.6.2'
+    }
+}
+
+javafx {
+    modules = [ 'javafx.controls' ]
+}
+mainClassName = 'b_DemoChicagoCrimes'
 
 group 'chicago-crime-tracker-app'
 version '1.0-SNAPSHOT'
