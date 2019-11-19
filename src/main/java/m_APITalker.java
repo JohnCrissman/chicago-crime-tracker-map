@@ -14,6 +14,7 @@ import java.net.UnknownHostException;
 
 public class m_APITalker {
 
+
     public static JSONObject getObjectResponse(String query_url, boolean debug) throws MalformedURLException, UnknownHostException, IOException, ParseException{
 
         if(debug) System.out.println("\t********************************************** - debug starts");
@@ -61,5 +62,20 @@ public class m_APITalker {
         }
         rd.close();
         return result.toString();
+    }
+
+
+    public static <E> E getJsonFromString(String JsonString, E json, boolean debug) throws  ParseException, IOException{
+//        converts the jsonString response into a json object or array, depending on the E type
+        if(debug) System.out.println("\tresult as String:\n\t" + JsonString+"\n");
+
+        JSONParser parser = new JSONParser();
+        Object obj = parser.parse(JsonString);
+
+        @SuppressWarnings("There will only be JsonObject or JsonArray Types")
+        E castedJson = (E) obj;
+
+        if(debug) System.out.println("\ttype of response:\t"+castedJson.getClass());
+        return castedJson;
     }
 }
