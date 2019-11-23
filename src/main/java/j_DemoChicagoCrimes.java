@@ -68,13 +68,10 @@ public class j_DemoChicagoCrimes {
     }
     public static j_Crime createCrime(JSONObject j) throws java.text.ParseException {
         String sDate = (String) j.get("date");
-        sDate = sDate.substring(0,10);
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = formatter.parse(sDate);
         String type = (String)j.get("primary_type");
         String latitude = (String)j.get("latitude");
         String longitude = (String)j.get("longitude");
-        return new j_Crime(type, latitude, longitude, date);
+        return new j_Crime(type, latitude, longitude, sDate);
     }
 
     public static j_CrimeList createCrimeList(JSONArray jsonArr) throws java.text.ParseException {
