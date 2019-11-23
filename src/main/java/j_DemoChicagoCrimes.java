@@ -14,7 +14,7 @@ import java.util.*;
 
 public class j_DemoChicagoCrimes {
     public static void main(String[] args) throws Exception {
-        String jsonUrl = "https://data.cityofchicago.org/resource/crimes.json";
+        String jsonUrl = "https://data.cityofchicago.org/resource/crimes.json?$limit=2000";
 
         System.out.println(jsonUrl);
 
@@ -85,6 +85,8 @@ public class j_DemoChicagoCrimes {
             j_Crime newCrime = createCrime(json1);
             listOfCrimes.add(newCrime);
         }
+
+        System.out.println(listOfCrimes.size());
 
         j_CrimeList crimeList = new j_CrimeList(10.0, listOfCrimes);
         return crimeList;
