@@ -11,7 +11,7 @@ allprojects {
 }
 
 javafx {
-    modules = [ 'javafx.controls' ]
+    modules = [ 'javafx.controls', 'javafx.web' ]
 }
 mainClassName = 'b_DemoChicagoCrimes'
 
