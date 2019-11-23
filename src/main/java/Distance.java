@@ -47,11 +47,11 @@ public class Distance {
     public static class LatLongHelper{
 
         public static double distanceBetweenTwoLocations(Address add1, Address add2){
-            return Math.sqrt(Math.pow(add1.getLongitude() - add2.getLongitude(), 2) + Math.pow(add1.getLatitude() - add2.getLatitude(), 2));
+            return Math.sqrt(Math.pow((add1.getLongitude())*53.0 - (add2.getLongitude())*53.0, 2) + Math.pow((add1.getLatitude())*69.0 - (add2.getLatitude())*69.0, 2));
         }
 
         public static boolean isWithinRadius(Address add1, Address add2, Double radius){
-            return Math.sqrt(Math.pow(add1.getLongitude() - add2.getLongitude(), 2) + Math.pow(add1.getLatitude() - add2.getLatitude(),2)) < radius;
+            return Math.sqrt(Math.pow((add1.getLongitude())*53.0 - (add2.getLongitude())*53.0, 2) + Math.pow((add1.getLatitude())*69.0 - (add2.getLatitude())*69.0,2)) < radius;
         }
 
         public static LatLong getLatLonFromGoogleAPI(String address) throws IOException, ParseException {

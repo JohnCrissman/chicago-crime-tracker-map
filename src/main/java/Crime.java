@@ -1,3 +1,5 @@
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
@@ -11,6 +13,16 @@ public class Crime {
     public Crime ()
     {
         this.address = new Address();
+    }
+
+    // constructor for query() in Crimes class.
+    public Crime(String type, String typeDescription, String latitude,
+                 String longitude, String date, String block) throws ParseException {
+        this.type = type;
+        this.typeDescription = typeDescription;
+        this.address = new Address(Double.parseDouble(latitude),
+                Double.parseDouble(longitude), block);
+        this.date = convertDate(date);
     }
 
     // constructor given almost all primitive types -- for testing
@@ -27,6 +39,13 @@ public class Crime {
         this.address = address;
     }
 
+
+    public Date convertDate(String sDate) throws ParseException {
+        sDate = sDate.substring(0,10);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = formatter.parse(sDate);
+        return date;
+    }
 
     // getters
     public String getType(){
