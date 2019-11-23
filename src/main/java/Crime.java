@@ -29,17 +29,13 @@ public class Crime {
     public String getType(){
         return this.type;
     }
-
     public Address getAddress() {
         return this.address;
     }
-
     public Double getLongitude(){
         return this.address.getLongitude();
     }
-    public Double getLatitude(){
-        return this.address.getLatitude();
-    }
+    public Double getLatitude() { return this.address.getLatitude(); }
 
     public Date getDate(){
         return this.date;
