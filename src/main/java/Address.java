@@ -22,14 +22,14 @@ public class Address{
 
     public String parseBlock(String fullAddress){
         // TODO: split fullAddress on actual block
-        String[] newBlock = block.split(" ");
+        String[] newBlock = fullAddress.split(" ");
         return newBlock[0];
     }
 
     public String parseStreet(String fullAddress){
         // TODO: split fullAddress on actual street
-        String[] newBlock = block.split(" ");
-        return block.substring(newBlock[0].length());
+        String[] newBlock = fullAddress.split(" ");
+        return fullAddress.substring(newBlock[0].length());
     }
 
     public double getLatitude() {
