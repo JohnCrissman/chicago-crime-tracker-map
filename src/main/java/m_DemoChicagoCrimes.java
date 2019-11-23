@@ -10,27 +10,24 @@ import org.json.simple.parser.ParseException;
 
 public class m_DemoChicagoCrimes {
 
-// TODO: use the google api to convert address to long and lat
-
     public static void main(String[] args) {
         System.out.println("Hello from Mari Demo");
 
         //        url that is going to be queried
-        String base = "https://geocoder.api.here.com/6.2/geocode.json?";
-        String apiHereKey = "app_id=kWDa074FyNMh0xqkXKFB";
-        String apiHereCode = "app_code=mN0YqfpiVu6jmm0I0uzZlA";
-        String searchText = "searchtext=425+W+Randolph+Chicago";
-
         String address = "1600+Amphitheatre+Parkway,+Mountain+View,+CA";
         String googleApiKey = "AIzaSyCN7hTS17iGOG-yLy7lBknC5TcCUCHq7Qo";
         String query_url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=" + googleApiKey;
 
-        String jsonUrl = "https://data.cityofchicago.org/resource/crimes.json";
+
+//          TODO: TEST FOR GETTING THE URL GIVEN THE ADDRESS FROM USER INPUT
+//           Marianela: Convert 5633 N Kenmore into 5633+N+Kenmore
+//           so I can make a good/clean request
 
 
 
 
-        try {
+
+//        try {
 // *************************************************************************************************************
 //            **************
 //            example for an API all expecting a Json Array as a response
@@ -51,19 +48,15 @@ public class m_DemoChicagoCrimes {
 
 // *************************************************************************************************************
 
-//          TODO: TEST FOR GETTING THE URL GIVEN THE ADDRESS FROM USER INPUT
 
 
 
+// *************************************************************************************************************
 
-
-
-//          TEST FOR GETTING THE LAT AND LONG GIVEN THE JSON RESPONSE
+//          TODO: TEST FOR GETTING THE LAT AND LONG GIVEN THE JSON RESPONSE
+/*
             JSONObject jobj = m_APITalker.getJsonFromString(getFakeJsonString(), new JSONObject(), false);
-//            System.out.println(jobj);
             System.out.println();
-//            JSONParser parser = new JSONParser();
-//            Object obj = parser.parse(getFakeJsonString());
             JSONArray jar = (JSONArray) jobj.get("results");
             JSONObject job = (JSONObject) jar.get(0);
             job = (JSONObject) job.get("geometry");
@@ -71,34 +64,28 @@ public class m_DemoChicagoCrimes {
             System.out.println(job.get("lng") + "\ttype: " + job.get("lng").getClass());
             Double longitud = (Double) job.get("lng");
             Double latitud = (Double) job.get("lat");
-
-
             System.out.println(job);
             System.out.println("long " + longitud + "and lat " + latitud);
-
-            jar.stream()
-                    .peek(a -> System.out.print("\t"+a+"testing here\t"))
-                    .forEach(System.out::println);
-
             System.out.println(jobj.get("results").getClass());
+*/
 
 // *************************************************************************************************************
 
-//          TODO: CREATE A CRIME OBJECT, MAKE IT INTO A LIST.  CREATE A NEW LIST WITH REALTIVETOADDRESS OBJECTS
-//           SETTING THE PROXIMITY FIELD
-
+/*
+            TODO: CREATE A CRIME OBJECT, MAKE IT INTO A LIST.  CREATE A NEW LIST WITH REALTIVETOADDRESS OBJECTS
+             SETTING THE PROXIMITY FIELD
             // create each crime and crimeRelativeToAddress object
             String type = "Robbery";
             String type2 = "Armed blah...";
             String block = " 076XX N Kenmore";
             Crime crime = new Crime(type, 0.2134, -42.2134, new Date(), block);
-            Thread.sleep(1000);
+//            Thread.sleep(1000);
             Crime crime1 = new Crime(type, 0.34523432, -14.34523432, new Date(), block);
-            Thread.sleep(1000);
+//            Thread.sleep(1000);
             Crime crime2 = new Crime(type, 0.65423432, -32.65423432, new Date(), block);
-            Thread.sleep(1000);
+//            Thread.sleep(1000);
             Crime crime3 = new Crime(type, 0.65723432, -72.65723432, new Date(), block);
-            Thread.sleep(1000);
+//            Thread.sleep(1000);
             Crime crime4 = new Crime(type, 0.12432, -92.12432, new Date(), block);
 
 
@@ -118,8 +105,8 @@ public class m_DemoChicagoCrimes {
             System.out.println(fc4);
 
             String user_address = "076XX N Paulina";
-            Double user_lat = 4.0;
-            Double user_long = 4.0;
+            double user_lat = 4.0;
+            double user_long = 4.0;
 
             Double radius = 50.0; //lat and long measurement (degrees and other stuff)
 
@@ -146,25 +133,26 @@ public class m_DemoChicagoCrimes {
             crimeRel.add(fc4);
             System.out.println("\nList that contains (4) the CrimeRelativeToAddress objects");
             System.out.println(crimeRel);
+*/
 
 
 
 
-        }
-        catch(MalformedURLException e){
-            System.out.println("Malformed URL");
-            e.printStackTrace();
-        }catch(UnknownHostException e){
-            System.out.println("Make sure you are connected to internet");
-        } catch (IOException e) {
-            System.out.println("conn something and BufferedReader");
-            e.printStackTrace();
-        } catch (ParseException e) {
-            System.out.println("issue with JSONParser.parse()");
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        }
+//        catch(MalformedURLException e){
+//            System.out.println("Malformed URL");
+//            e.printStackTrace();
+//        }catch(UnknownHostException e){
+//            System.out.println("Make sure you are connected to internet");
+//        } catch (IOException e) {
+//            System.out.println("conn something and BufferedReader");
+//            e.printStackTrace();
+//        } catch (ParseException e) {
+//            System.out.println("issue with JSONParser.parse()");
+//            e.printStackTrace();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
