@@ -1,11 +1,10 @@
 import java.io.IOException;
 import java.net.*;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.json.simple.*;
-import org.json.simple.parser.ContainerFactory;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 
@@ -83,6 +82,74 @@ public class m_DemoChicagoCrimes {
 
             System.out.println(jobj.get("results").getClass());
 
+// *************************************************************************************************************
+
+//          TODO: CREATE A CRIME OBJECT, MAKE IT INTO A LIST.  CREATE A NEW LIST WITH REALTIVETOADDRESS OBJECTS
+//           SETTING THE PROXIMITY FIELD
+
+            // create each crime and crimeRelativeToAddress object
+            String type = "Robbery";
+            String type2 = "Armed blah...";
+            String block = " 076XX N Kenmore";
+            Crime crime = new Crime(type, 0.2134, -42.2134, new Date(), block);
+            Thread.sleep(1000);
+            Crime crime1 = new Crime(type, 0.34523432, -14.34523432, new Date(), block);
+            Thread.sleep(1000);
+            Crime crime2 = new Crime(type, 0.65423432, -32.65423432, new Date(), block);
+            Thread.sleep(1000);
+            Crime crime3 = new Crime(type, 0.65723432, -72.65723432, new Date(), block);
+            Thread.sleep(1000);
+            Crime crime4 = new Crime(type, 0.12432, -92.12432, new Date(), block);
+
+
+            System.out.println("Creating the relative crime objects, from the already existent crime objects");
+            CrimeRelativeToAddress fc = new CrimeRelativeToAddress(crime);
+            CrimeRelativeToAddress fc1 = new CrimeRelativeToAddress(crime1);
+            CrimeRelativeToAddress fc2 = new CrimeRelativeToAddress(crime2);
+            CrimeRelativeToAddress fc3 = new CrimeRelativeToAddress(crime3);
+            CrimeRelativeToAddress fc4 = new CrimeRelativeToAddress(crime4);
+
+
+            System.out.println(crime);
+            System.out.println(fc);
+            System.out.println(fc1);
+            System.out.println(fc2);
+            System.out.println(fc3);
+            System.out.println(fc4);
+
+            String user_address = "076XX N Paulina";
+            Double user_lat = 4.0;
+            Double user_long = 4.0;
+
+            Double radius = 50.0; //lat and long measurement (degrees and other stuff)
+
+            System.out.println("Setting the proximity based on the userAddress");
+            fc.setProximity(new Address(user_lat, user_long, user_address));
+            fc1.setProximity(new Address(user_lat, user_long, user_address));
+            fc2.setProximity(new Address(user_lat, user_long, user_address));
+            fc3.setProximity(new Address(user_lat, user_long, user_address));
+            fc4.setProximity(new Address(user_lat, user_long, user_address));
+
+            System.out.println("Now, with the new with proximity:");
+            System.out.println(fc);
+            System.out.println(fc1);
+            System.out.println(fc2);
+            System.out.println(fc3);
+            System.out.println(fc4);
+
+            // create the list that holds the crimeRelativeToAddress
+            List<CrimeRelativeToAddress> crimeRel = new LinkedList<>();
+            crimeRel.add(fc);
+            crimeRel.add(fc1);
+            crimeRel.add(fc2);
+            crimeRel.add(fc3);
+            crimeRel.add(fc4);
+            System.out.println("\nList that contains (4) the CrimeRelativeToAddress objects");
+            System.out.println(crimeRel);
+
+
+
+
         }
         catch(MalformedURLException e){
             System.out.println("Malformed URL");
@@ -94,6 +161,8 @@ public class m_DemoChicagoCrimes {
             e.printStackTrace();
         } catch (ParseException e) {
             System.out.println("issue with JSONParser.parse()");
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
