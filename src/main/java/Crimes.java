@@ -106,29 +106,68 @@ public class Crimes {
     public List<CrimeRelativeToAddress> filterByA(){
         Comparator<CrimeRelativeToAddress> dateComparator =
                 (c1,c2) -> {
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                    String c1Date = sdf.format(c1.getDate());
-                    String c2Date = sdf.format(c2.getDate());
-                    return 1;
+                    int dateCompare = c2.getDate().compareTo(c1.getDate());
+                    int typeCompare = c1.getType().compareTo(c2.getType());
+                    int streetCompare = c1.getAddress().getStreet().compareTo(c2.getAddress().getStreet());
+                    int blockCompare = c1.getAddress().getBlock().compareTo(c2.getAddress().getBlock());
+                    if(dateCompare==0 && typeCompare==0 && streetCompare ==0){
+                        return ((blockCompare==0)) ? streetCompare : blockCompare;
+                    }
+                    else if(dateCompare==0 && typeCompare == 0){
+                        return ((streetCompare == 0)) ? typeCompare : streetCompare;
+                    }
+                    else if(dateCompare==0){
+                        return ((typeCompare == 0)) ? dateCompare : typeCompare;
+                    }
+                    else{
+                        return dateCompare;
+                    }
                 };
         List<CrimeRelativeToAddress> list = this.crimesRelativeTo;
-        list.stream()
+        List<CrimeRelativeToAddress> newList = list.stream()
                 .sorted(dateComparator)
                 .collect(toList());
-        return new LinkedList<CrimeRelativeToAddress>();
+        return newList;
     }
 
     // Sort by location (alpha by street)
     public List<CrimeRelativeToAddress> filterByB(){
-
-        return new LinkedList<CrimeRelativeToAddress>();
+        Comparator<CrimeRelativeToAddress> locationComparator =
+                Comparator.comparing(c -> c.getAddress().getStreet());
+        List<CrimeRelativeToAddress> list = this.crimesRelativeTo;
+        List<CrimeRelativeToAddress> newList = list.stream()
+                .sorted(locationComparator)
+                .collect(toList());
+        return newList;
     }
 
     // Sort by type (alpha)
-    // Then sort by date, street, and block #.
+    // Then sort by date (newest), street, and block #.
     public List<CrimeRelativeToAddress> filterByC(){
-
-        return new LinkedList<CrimeRelativeToAddress>();
+        Comparator<CrimeRelativeToAddress> typeComparator =
+                (c1,c2) -> {
+                    int dateCompare = c2.getDate().compareTo(c1.getDate());
+                    int typeCompare = c1.getType().compareTo(c2.getType());
+                    int streetCompare = c1.getAddress().getStreet().compareTo(c2.getAddress().getStreet());
+                    int blockCompare = c1.getAddress().getBlock().compareTo(c2.getAddress().getBlock());
+                    if(typeCompare==0 && dateCompare==0 && streetCompare ==0){
+                        return ((blockCompare==0)) ? streetCompare : blockCompare;
+                    }
+                    else if(typeCompare==0 && dateCompare == 0){
+                        return ((streetCompare == 0)) ? dateCompare : streetCompare;
+                    }
+                    else if(typeCompare==0){
+                        return ((dateCompare == 0)) ? typeCompare : dateCompare;
+                    }
+                    else{
+                        return typeCompare;
+                    }
+                };
+        List<CrimeRelativeToAddress> list = this.crimesRelativeTo;
+        List<CrimeRelativeToAddress> newList = list.stream()
+                .sorted(typeComparator)
+                .collect(toList());
+        return newList;
     }
 
 
