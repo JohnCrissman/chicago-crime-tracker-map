@@ -1,16 +1,16 @@
 //from: http://fxexperience.com/2011/05/maps-in-javafx-2-0/
 //modifications from: https://o7planning.org/en/11151/javafx-webview-and-webengine-tutorial
+// local file: https://stackoverflow.com/questions/35703884/trying-to-load-a-local-page-into-javafx-webengine
 
 //charts here: https://www.tutorialspoint.com/javafx/javafx_application.htm
 //layouts here: https://docs.oracle.com/javafx/2/layout/builtin_layouts.htm
-//scrollbox: https://stackoverflow.com/questions/28037818/how-to-add-a-scrollbar-in-javafx
+//components: https://www.tutorialspoint.com/javafx/javafx_ui_controls.htm
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -18,8 +18,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
+import java.net.URL;
 import java.text.DateFormat;
 
 public class b_DemoChicagoCrimes extends Application {
@@ -31,71 +34,141 @@ public class b_DemoChicagoCrimes extends Application {
         HBox topMenu = createTopMenu();
         basePane.setTop(topMenu);
 
+        /*// for now, starting view is crime list
         ScrollPane crimeList = createCrimeList();
-        basePane.setCenter(crimeList);
+        basePane.setCenter(crimeList);*/
+
+        createMapView(basePane);
 
         HBox bottomMenu = createBottomMenu();
         basePane.setBottom(bottomMenu);
 
+        //make visible
         Scene scene = new Scene(basePane, 1000, 700, Color.web("#666970"));
         stage.setScene(scene);
-        stage.setTitle("List Test");
-        // show stage
+        stage.setTitle("Crimes in Chicago");
         stage.show();
+    }
+
+    private void createMapView(BorderPane basePane) {
+        WebView webView = new WebView();
+        WebEngine webEngine = webView.getEngine();
+        //Doesn't work yet: URL mapPage = this.getClass().getResource("b_mapdemo.html");
+        //webEngine.load(mapPage.toString());
+        webEngine.load("http://www.google.com");
+        basePane.setCenter(webView);
     }
 
     private HBox createTopMenu() {
         HBox topMenu = new HBox();
-        topMenu.setPadding(new Insets(15, 12, 15, 12));
-        topMenu.setSpacing(10);
-        topMenu.setStyle("-fx-background-color: #5555ff;");
-        //TextArea addr = new TextArea("Hello world");
-        //Button search = new Button("Search");
-        //search.setPrefSize(100, 20);
-        //topMenu.getChildren().addAll(addr);
+        setUpTopMenuStyle(topMenu, "-fx-background-color: blue;");
+        TextField addr = setUpAddressSearch();
+        ChoiceBox radius = setUpRadiusMenu();
+        Button search = setUpSearchButton();
+        topMenu.getChildren().addAll(addr, radius, search);
 
         return topMenu;
     }
 
+    private void setUpTopMenuStyle(HBox topMenu, String s) {
+        topMenu.setPadding(new Insets(15, 12, 15, 12));
+        topMenu.setSpacing(10);
+        topMenu.setStyle(s);
+        topMenu.setAlignment(Pos.CENTER);
+    }
+
+    private Button setUpSearchButton() {
+        Button search = new Button("Search");
+        search.setPrefSize(100, 20);
+        return search;
+    }
+
+    private ChoiceBox setUpRadiusMenu() {
+        ChoiceBox radius = new ChoiceBox();
+        radius.getItems().addAll
+                ("0.1 mi", "0.25 mi", "0.5 mi", "0.75 mi", "1 mi");
+        radius.setValue("0.1 mi");
+        radius.setPrefWidth(100);
+        return radius;
+    }
+
+    private TextField setUpAddressSearch() {
+        TextField addr = new TextField("Address");
+        addr.setPrefWidth(400);
+        return addr;
+    }
+
     private ScrollPane createCrimeList() {
         GridPane crimeList = new GridPane();
-        crimeList.setStyle("-fx-background-color: #ff5555;");
+        crimeList.setStyle("-fx-background-color: pink;");
         crimeList.setHgap(10);
         crimeList.setVgap(10);
         crimeList.setPadding(new Insets(10, 20, 10, 20));
-        Text type = new Text("Type of crime");
-        type.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        Text date = new Text("Date of crime");
-        date.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        Text address = new Text("Address");
-        address.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        crimeList.add(type, 1, 0);
-        crimeList.add(date, 2, 0);
-        crimeList.add(address, 3, 0);
-        for(int i = 1; i < 100; i++) {
-            type = new Text("Battery");
-            date = new Text("11/26/2019");
-            address = new Text("5500 N St. Louis Ave");
-            crimeList.add(type, 1, i);
-            crimeList.add(date, 2, i);
-            crimeList.add(address, 3, i);
-
-        }
+        crimeList.setAlignment(Pos.CENTER);
+        setUpListHeaders(crimeList);
+        addCrimesToListView(crimeList);
         ScrollPane s = new ScrollPane();
         s.setFitToHeight(true);
+        s.setFitToWidth(true);
         s.setContent(crimeList);
         return s;
     }
 
+    private void addCrimesToListView(GridPane crimeList) {
+        Text type;
+        Text description;
+        Text date;
+        Text address;
+        for(int i = 1; i < 100; i++) {
+            type = new Text("Battery");
+            description = new Text("Description");
+            date = new Text("11/26/2019");
+            address = new Text("5500 N St. Louis Ave, Chicago, IL");
+            crimeList.add(date, 1, i);
+            crimeList.add(type, 2, i);
+            crimeList.add(description, 3, i);
+            crimeList.add(address, 4, i);
+
+        }
+    }
+
+    private void setUpListHeaders(GridPane crimeList) {
+        Text type = new Text("Type of crime");
+        type.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        Text description = new Text("Description of the crime");
+        description.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        Text date = new Text("Date of crime");
+        date.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        Text address = new Text("Address");
+        address.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+        crimeList.add(date, 1, 0);
+        crimeList.add(type, 2, 0);
+        crimeList.add(description, 3, 0);
+        crimeList.add(address, 4, 0);
+    }
+
     private HBox createBottomMenu() {
+        //create bottom pane and set up style
         HBox bottomMenu = new HBox();
         bottomMenu.setPadding(new Insets(15, 12, 15, 12));
-        bottomMenu.setSpacing(10);
-        bottomMenu.setStyle("-fx-background-color: #55ff55;");
-        //TextArea addr = new TextArea("Hello world");
-        //Button search = new Button("Search");
-        //search.setPrefSize(100, 20);
-        //topMenu.getChildren().addAll(addr);
+        bottomMenu.setSpacing(20);
+        bottomMenu.setStyle("-fx-background-color: green;");
+        bottomMenu.setAlignment(Pos.CENTER);
+
+        //create View Map button
+        Button mapViewButton = new Button("View Map");
+        mapViewButton.setPrefSize(100, 20);
+
+        //create View List button
+        Button listViewButton = new Button("View List");
+        listViewButton.setPrefSize(100, 20);
+
+        //create Exit button
+        Button exitProgramButton = new Button("Exit");
+        exitProgramButton.setPrefSize(100,20);
+
+        //add buttons to pane
+        bottomMenu.getChildren().addAll(mapViewButton, listViewButton, exitProgramButton);
 
         return bottomMenu;
     }
