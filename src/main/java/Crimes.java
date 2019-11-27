@@ -3,6 +3,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -58,10 +60,17 @@ public class Crimes {
         String today2 = today.toString().split("\\.")[0];
         String previous2 = previous.toString().split("\\.")[0];
 
-        String url_dateRange = "$limit=10&$where=date between '" + previous2+ "' and '" + today2 + "'";
-        String fullUrl = url+"?"+url_dateRange;
+        String url_dateRange = "date between '" + previous2+ "' and '" + today2 + "'";
+        String fullUrl = url + url_dateRange;
         System.out.println(fullUrl);
-        return fullUrl;
+        System.out.println(url);
+        try {
+            return url + "?$where=" + URLEncoder.encode(url_dateRange, "UTF-8");
+        }catch(UnsupportedEncodingException e){
+            System.out.println("oops, i did it again!");
+        }
+        return "";
+//        return "https://data.cityofchicago.org/resource/ijzp-q8t2.json?$where=date between '2019-09-01T12:00:00' and '2019-11-01T12:00:00'";
     }
 
 
