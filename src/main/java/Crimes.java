@@ -17,10 +17,9 @@ public class Crimes {
     private Address relativeAddress;
 
     public Crimes() throws ParseException, java.text.ParseException, IOException {
-        String url = "https://data.cityofchicago.org/resource/ijzp-q8t2.json"; // <-- TODO: add the right url here
+        String url = "https://data.cityofchicago.org/resource/ijzp-q8t2.json";
         int numOfweeks = 2;
-//        TODO: DONE!!!
-//         John: query(url, numOfWeek) should be called here.
+
         query(url, numOfweeks);
     }
 
@@ -61,19 +60,8 @@ public class Crimes {
 
 
     public void query(String url, int numOfPastWeeks) throws IOException, ParseException, java.text.ParseException {
-        /*
-          TODO: DONE !!!!!!!!!!
-           John: GENERATE a method that created a url_dateRange so that it contains dates that look like
-            '2019-09-01T12:00:00'
-           ie: "$where=date between '<<<TODAY minus 2 weeks>>>' and '<<<TODAY>>>'"
-*/
         String fullUrl = getFullURL(url, numOfPastWeeks);
-/*
-         TODO: DONE!!!!!!
-          John, big chunks of your code will go here
-          this method calls the API using APITalker and the url loads the crimes with the crimes for the past
-          numOfPastWeeks weeks.  Puts them into a the crime list.
-*/
+
         JSONArray jsonArr = m_APITalker.getArrayResponse(fullUrl, false);
         List<Crime> listOfCrimes = createCrimeList(jsonArr);
         this.crimes = listOfCrimes;
