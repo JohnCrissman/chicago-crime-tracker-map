@@ -15,7 +15,7 @@ import java.net.UnknownHostException;
 public class APITalker {
 
 
-    public static JSONObject getObjectResponse(String query_url, boolean debug) throws MalformedURLException, UnknownHostException, IOException, ParseException{
+    public static JSONObject getObjectResponse(String query_url, boolean debug) throws IOException{
 
         if(debug) System.out.println("\t********************************************** - debug starts");
         JSONObject json = getJson(query_url, new JSONObject(), debug);
@@ -33,19 +33,29 @@ public class APITalker {
 
     }
 
-    private static <E> E getJson(String query_url, E json, boolean debug) throws  ParseException, IOException {
+    private static <E> E getJson(String query_url, E json, boolean debug) throws IOException{
 //        converts the string json response into a json object or array, depending on the E type
         String result = APIRequestAsString(query_url);
-        if(debug) System.out.println("\tresult as String:\n\t" + result+"\n");
+        return getJsonFromString(debug, result);
+    }
+
+    private static <E> E getJsonFromString(boolean debug, String result) throws IOException {
+        E castedJson;
+        if(debug) System.out.println("\tResult as String:\n\t" + result+"\n");
 
         JSONParser parser = new JSONParser();
-        Object obj = parser.parse(result);
-
-        @SuppressWarnings("There will only be JsonObject or JsonArray Types")
-        E castedJson = (E) obj;
-
-        if(debug) System.out.println("\ttype of response:\t"+castedJson.getClass());
-        return castedJson;
+        try {
+                Object obj = parser.parse(result);
+                if(obj instanceof JSONObject || obj instanceof JSONArray) {
+                    castedJson = (E) obj;
+                    if(debug) System.out.println("\tType of response:\t"+castedJson.getClass());
+                    return castedJson;
+            }
+        }
+        catch(ParseException e){
+            throw new IOException("Error parsing the server's response");
+        }
+        return null;
     }
 
     private static String APIRequestAsString(String raw_url) throws UnknownHostException, MalformedURLException, IOException{
@@ -65,17 +75,4 @@ public class APITalker {
     }
 
 
-    public static <E> E getJsonFromString(String JsonString, E json, boolean debug) throws  ParseException, IOException{
-//        converts the jsonString response into a json object or array, depending on the E type
-        if(debug) System.out.println("\tresult as String:\n\t" + JsonString+"\n");
-
-        JSONParser parser = new JSONParser();
-        Object obj = parser.parse(JsonString);
-
-        @SuppressWarnings("There will only be JsonObject or JsonArray Types")
-        E castedJson = (E) obj;
-
-        if(debug) System.out.println("\ttype of response:\t"+castedJson.getClass());
-        return castedJson;
-    }
 }

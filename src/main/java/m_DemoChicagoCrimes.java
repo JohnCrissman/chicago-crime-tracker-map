@@ -1,10 +1,8 @@
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.*;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Scanner;
 
-import org.json.simple.*;
 import org.json.simple.parser.ParseException;
 
 
@@ -19,11 +17,32 @@ public class m_DemoChicagoCrimes {
         String query_url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=" + googleApiKey;
 
 
-//          TODO: TEST FOR GETTING THE URL GIVEN THE ADDRESS FROM USER INPUT
-//           Marianela: Convert 5633 N Kenmore into 5633+N+Kenmore
-//           so I can make a good/clean request
+//      TODO: DONE! <-- TEST FOR GETTING THE URL GIVEN THE ADDRESS FROM USER INPUT
+//
+        Scanner s = new Scanner(System.in);
+        int times = 0;
+        while(times < 1){
+            System.out.print("("+(times+1)+") Enter an address:  ");
+            String userAddress = s.nextLine();
+            System.out.println("\tconverting \" " + userAddress+ " \" ...");
+            try{
+                try{
+                    String converted = Crimes.convertToURL(userAddress);
+                    System.out.println("\tconvertedAddress: " + converted);
+                    System.out.println(Distance.LatLongHelper.getLatLonAddrFromGoogleAPI(converted));
 
-
+                }catch (NotAnAddressException e){
+                    System.out.println("Not a valid address. Please try a different one.");
+                }
+            }catch (UnsupportedEncodingException e) {
+                System.out.println("UTF-8 is not supported");
+                System.out.println("get out of loop");
+            }catch (IOException e){
+                System.out.println("Problem with the URL/ server/ response");
+                System.out.println("get out of loop");
+            }
+            times++;
+        }
 
 
 
@@ -250,4 +269,6 @@ public class m_DemoChicagoCrimes {
                 "   \"status\": \"OK\"\n" +
                 "}";
     }
+
+
 }

@@ -3,6 +3,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -29,12 +31,18 @@ public class Crimes {
         return this.crimesRelativeTo;
     }
 
-    public List<CrimeRelativeToAddress> getCrimesWithinRadius(double radius, String address) throws IOException, ParseException {
-        Distance.LatLong latLong = Distance.LatLongHelper.getLatLonFromGoogleAPI(address);
-        this.relativeAddress = new Address(latLong.latitude, latLong.longitude, address);
-        this.radius = radius*(1);// TODO: DONE!!  Did the conversion in the distance class <-- John: make conversion of the radius from miles to the corresponding unit that lat/lon use.
+    public void setCrimesWithinRadius(double radius, String address) throws IOException, NotARadiusException, NotAnAddressException {
+        /*
+        *  sets the instance variable crimesRelativeToAddress to the filtered specified by the user
+        *  throws:
+        *  IOException: if there is an issue with the server (API)
+        *  NotAnAddressException if there are no results found from the google API
+        *  NotARadiusException if there is a radius that has value 0 or less
+        * */
+        if (radius <= 0) throw new NotARadiusException("Not a radius: "+ radius);
+        this.relativeAddress = Distance.LatLongHelper.getLatLonAddrFromGoogleAPI(address);
+        this.radius = radius;
         keepCrimesWithinRadius();
-        return this.crimesRelativeTo;
     }
 
     private void keepCrimesWithinRadius(){
