@@ -3,8 +3,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -17,7 +15,7 @@ public class Crimes {
     private double radius;  // in lat/long units
     private Address relativeAddress;
 
-    public Crimes() throws ParseException, java.text.ParseException, IOException {
+    public Crimes() throws ParseException, IOException {
         String url = "https://data.cityofchicago.org/resource/ijzp-q8t2.json";
         int numOfweeks = 2;
 
@@ -40,7 +38,7 @@ public class Crimes {
         *  NotARadiusException if there is a radius that has value 0 or less
         * */
         if (radius <= 0) throw new NotARadiusException("Not a radius: "+ radius);
-        this.relativeAddress = Distance.LatLongHelper.getLatLonAddrFromGoogleAPI(address);
+        this.relativeAddress = AddressHelper.getAddressFromGoogleAPI(address);
         this.radius = radius;
         keepCrimesWithinRadius();
     }
@@ -50,32 +48,44 @@ public class Crimes {
         this.crimesRelativeTo = this.crimes.stream()
                 .map(CrimeRelativeToAddress::new)
                 .peek(cRel -> cRel.setProximity(this.relativeAddress))
-                .filter(cRel -> Distance.LatLongHelper.isWithinRadius(cRel.getAddress(), this.relativeAddress, this.radius))
+                .filter(cRel -> AddressHelper.isWithinRadius(cRel.getAddress(), this.relativeAddress, this.radius))
                 .collect(toList());
     }
 
-    public String getFullURL(String url, int numOfPastWeeks){
+    private String getFullURL(String url, int numOfPastWeeks){
         LocalDateTime today = LocalDateTime.now();
-        LocalDateTime today_minus_one_week = today.minus(numOfPastWeeks, ChronoUnit.WEEKS);
         LocalDateTime previous = today.minus(numOfPastWeeks, ChronoUnit.WEEKS);
-        String today2 = today_minus_one_week.toString().split("\\.")[0];
+        String today2 = today.toString().split("\\.")[0];
         String previous2 = previous.toString().split("\\.")[0];
 
-        String url_dateRange = "$where=date between '" + previous2+ "' and '" + today2 + "'";
+        String url_dateRange = "$limit=10&$where=date between '" + previous2+ "' and '" + today2 + "'";
         String fullUrl = url+"?"+url_dateRange;
-        return url;
+        System.out.println(fullUrl);
+        return fullUrl;
     }
 
 
-    public void query(String url, int numOfPastWeeks) throws IOException, ParseException, java.text.ParseException {
+    private void query(String url, int numOfPastWeeks) throws IOException, ParseException{
         String fullUrl = getFullURL(url, numOfPastWeeks);
 
         JSONArray jsonArr = APITalker.getArrayResponse(fullUrl, false);
-        List<Crime> listOfCrimes = createCrimeList(jsonArr);
-        this.crimes = listOfCrimes;
+        this.crimes = createCrimeList(jsonArr);
     }
 
-    public static Crime createCrime(JSONObject j) throws java.text.ParseException {
+    private static List<Crime> createCrimeList(JSONArray jsonArr) {
+        List<Crime> listOfCrimes = new ArrayList<>();
+
+        for(int i = 0; i < jsonArr.size(); i++){
+            JSONObject json1 = (JSONObject) jsonArr.get(i);
+            Crime newCrime = createCrime(json1);
+            System.out.println(newCrime);
+            if (newCrime != null){
+            listOfCrimes.add(newCrime);}
+        }
+        return listOfCrimes;
+    }
+
+    private static Crime createCrime(JSONObject j) {
         try {
             String sDate = (String) j.get("date");
             String type = (String) j.get("primary_type");
@@ -83,8 +93,7 @@ public class Crimes {
             String latitude = (String) j.get("latitude");
             String longitude = (String) j.get("longitude");
             String block = (String) j.get("block");
-            return new Crime(type, typeDescription, latitude,
-                    longitude, sDate, block);
+            return new Crime(type, typeDescription, latitude, longitude, sDate, block);
         }
         catch(Exception e){
             System.out.println("key not found!!");
@@ -93,17 +102,6 @@ public class Crimes {
         return null;
     }
 
-    public static List<Crime> createCrimeList(JSONArray jsonArr) throws java.text.ParseException {
-        List<Crime> listOfCrimes = new ArrayList<>();
-
-        for(int i = 0; i < jsonArr.size(); i++){
-            JSONObject json1 = (JSONObject) jsonArr.get(i);
-            Crime newCrime = createCrime(json1);
-            if (newCrime != null){
-            listOfCrimes.add(newCrime);}
-        }
-        return listOfCrimes;
-    }
 
     // Sort by date(newest).
     // Then sort by type, street, and block #.
@@ -114,7 +112,7 @@ public class Crimes {
                     int typeCompare = c1.getType().compareTo(c2.getType());
                     int streetCompare = c1.getAddress().getStreet().compareTo(c2.getAddress().getStreet());
                     int blockCompare = c1.getAddress().getBlock().compareTo(c2.getAddress().getBlock());
-                    if(dateCompare==0 && typeCompare==0 && streetCompare ==0){
+                    if(dateCompare == 0 && typeCompare == 0 && streetCompare == 0){
                         return ((blockCompare==0)) ? streetCompare : blockCompare;
                     }
                     else if(dateCompare==0 && typeCompare == 0){
@@ -127,22 +125,19 @@ public class Crimes {
                         return dateCompare;
                     }
                 };
-        List<CrimeRelativeToAddress> list = this.crimesRelativeTo;
-        List<CrimeRelativeToAddress> newList = list.stream()
+        return this.crimesRelativeTo.stream()
                 .sorted(dateComparator)
                 .collect(toList());
-        return newList;
     }
 
     // Sort by location (alpha by street)
     public List<CrimeRelativeToAddress> filterByB(){
         Comparator<CrimeRelativeToAddress> locationComparator =
                 Comparator.comparing(c -> c.getAddress().getStreet());
-        List<CrimeRelativeToAddress> list = this.crimesRelativeTo;
-        List<CrimeRelativeToAddress> newList = list.stream()
+
+        return this.crimesRelativeTo.stream()
                 .sorted(locationComparator)
                 .collect(toList());
-        return newList;
     }
 
     // Sort by type (alpha)
@@ -167,11 +162,9 @@ public class Crimes {
                         return typeCompare;
                     }
                 };
-        List<CrimeRelativeToAddress> list = this.crimesRelativeTo;
-        List<CrimeRelativeToAddress> newList = list.stream()
+        return this.crimesRelativeTo.stream()
                 .sorted(typeComparator)
                 .collect(toList());
-        return newList;
     }
 
 
