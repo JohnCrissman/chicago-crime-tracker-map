@@ -40,7 +40,7 @@ public class Crime {
     }
 
 
-    public Date convertDate(String sDate) throws ParseException {
+    private Date convertDate(String sDate) throws ParseException {
         sDate = sDate.substring(0,10);
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date date = formatter.parse(sDate);
@@ -54,13 +54,10 @@ public class Crime {
     public Address getAddress() {
         return this.address;
     }
-    public Double getLongitude(){
-        return this.address.getLongitude();
-    }
-    public Double getLatitude() { return this.address.getLatitude(); }
     public Date getDate(){
         return this.date;
     }
+    public String getTypeDescription(){ return this.typeDescription;}
 
     @Override
     public String toString(){
