@@ -27,9 +27,7 @@ public class m_DemoChicagoCrimes {
             System.out.println("\tconverting \" " + userAddress+ " \" ...");
             try{
                 try{
-                    String converted = Crimes.convertToURL(userAddress);
-                    System.out.println("\tconvertedAddress: " + converted);
-                    System.out.println(Distance.LatLongHelper.getLatLonAddrFromGoogleAPI(converted));
+                    System.out.println(Distance.LatLongHelper.getLatLonAddrFromGoogleAPI(address));
 
                 }catch (NotAnAddressException e){
                     System.out.println("Not a valid address. Please try a different one.");
