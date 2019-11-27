@@ -30,7 +30,3 @@ dependencies {
     compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 
 }
-
-run {
-    jvmArgs = ['--add-exports javafx.graphics/com.sun.javafx.sg.prism=ALL-UNNAMED']
-}
