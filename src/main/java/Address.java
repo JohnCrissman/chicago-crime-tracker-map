@@ -1,4 +1,6 @@
 public class Address{
+    private static final double LATINMILES = 69.0;
+    private static final double LONGINMILES = 53.0;
 
     private double latitude;
     private double longitude;
@@ -21,13 +23,13 @@ public class Address{
 
 
     public String parseBlock(String fullAddress){
-        // TODO: split fullAddress on actual block
+        // Splits fullAddress on actual block
         String[] newBlock = fullAddress.split(" ");
         return newBlock[0];
     }
 
     public String parseStreet(String fullAddress){
-        // TODO: split fullAddress on actual street
+        // Splits fullAddress on actual street
         String[] newBlock = fullAddress.split(" ");
         return fullAddress.substring(newBlock[0].length());
     }
@@ -40,6 +42,7 @@ public class Address{
         return this.longitude;
     }
 
+
     public String getStreet() {
         return this.street;
     }
@@ -48,7 +51,19 @@ public class Address{
         return this.block;
     }
 
+    public double getLatInMiles() {
+        return this.latitude*LATINMILES;
+    }
 
+    public double getLongInMiles() {
+        return this.longitude*LONGINMILES;
+    }
+
+    public String getFulAddress(){
+        return this.block + " " + this.street;
+    }
+
+    @Override
     public String toString(){
         return this.block + " " + this.street + " (" + this.latitude+"\" "+ + this.longitude+ "\")";
     }
