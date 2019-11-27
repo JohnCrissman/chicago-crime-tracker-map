@@ -3,7 +3,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
-import java.util.Date;
 
 public class Distance {
 
@@ -61,7 +60,7 @@ public class Distance {
 
             String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=" + googleApiKey;
 
-            JSONObject jobj = m_APITalker.getObjectResponse(url, false);
+            JSONObject jobj = APITalker.getObjectResponse(url, false);
             JSONArray jar = (JSONArray) jobj.get("results");
             JSONObject job = (JSONObject) jar.get(0);
             job = (JSONObject) job.get("geometry");

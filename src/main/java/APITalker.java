@@ -12,7 +12,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 
 
-public class m_APITalker {
+public class APITalker {
 
 
     public static JSONObject getObjectResponse(String query_url, boolean debug) throws MalformedURLException, UnknownHostException, IOException, ParseException{

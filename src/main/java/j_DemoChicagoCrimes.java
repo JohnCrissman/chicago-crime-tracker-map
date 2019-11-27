@@ -3,13 +3,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.io.*;
 import java.net.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class j_DemoChicagoCrimes {
@@ -24,7 +19,7 @@ public class j_DemoChicagoCrimes {
 //            System.out.println("This is the response\n\t" + jsonObj);
 
             //example for an API all expecting a Json Array as a response
-            JSONArray jsonArr = m_APITalker.getArrayResponse(jsonUrl, false);
+            JSONArray jsonArr = APITalker.getArrayResponse(jsonUrl, false);
             System.out.println("This is the response\n\t" + jsonArr);
 
             JSONObject json1 = (JSONObject) jsonArr.get(0);

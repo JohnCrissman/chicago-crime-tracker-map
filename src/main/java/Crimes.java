@@ -3,7 +3,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -74,7 +73,7 @@ public class Crimes {
           this method calls the API using APITalker and the url loads the crimes with the crimes for the past
           numOfPastWeeks weeks.  Puts them into a the crime list.
 */
-        JSONArray jsonArr = m_APITalker.getArrayResponse(fullUrl, false);
+        JSONArray jsonArr = APITalker.getArrayResponse(fullUrl, false);
         List<Crime> listOfCrimes = createCrimeList(jsonArr);
         this.crimes = listOfCrimes;
     }
