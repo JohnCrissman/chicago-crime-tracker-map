@@ -1,11 +1,15 @@
 
+import org.json.simple.parser.ParseException;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.List;
 
 public class j_testing {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException, java.text.ParseException, IOException {
         // input for method:  String url    int numOfPastWeeks
 //        TODO: John: GENERATE a method that created a url_dateRange so that it contains dates that look like
 //        '2019-09-01T12:00:00'
@@ -44,7 +48,10 @@ public class j_testing {
         System.out.println(sdf.format(date));
         System.out.println(sdf.format(date).getClass());
 
-
+        Crimes myCrimes = new Crimes();
+        List<Crime> listOfCrimes = myCrimes.getAllCrimes();
+        System.out.println(listOfCrimes.get(0));
+        System.out.println(listOfCrimes.size());
 
     }
 }

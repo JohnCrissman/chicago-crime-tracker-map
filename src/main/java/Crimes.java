@@ -48,13 +48,14 @@ public class Crimes {
 
     public String getFullURL(String url, int numOfPastWeeks){
         LocalDateTime today = LocalDateTime.now();
+        LocalDateTime today_minus_one_week = today.minus(numOfPastWeeks, ChronoUnit.WEEKS);
         LocalDateTime previous = today.minus(numOfPastWeeks, ChronoUnit.WEEKS);
-        String today2 = today.toString().split("\\.")[0];
+        String today2 = today_minus_one_week.toString().split("\\.")[0];
         String previous2 = previous.toString().split("\\.")[0];
 
         String url_dateRange = "$where=date between '" + previous2+ "' and '" + today2 + "'";
         String fullUrl = url+"?"+url_dateRange;
-        return fullUrl;
+        return url;
     }
 
 
@@ -67,14 +68,21 @@ public class Crimes {
     }
 
     public static Crime createCrime(JSONObject j) throws java.text.ParseException {
-        String sDate = (String) j.get("date");
-        String type = (String)j.get("primary_type");
-        String typeDescription = (String)j.get("description");
-        String latitude = (String)j.get("latitude");
-        String longitude = (String)j.get("longitude");
-        String block = (String)j.get("block");
-        return new Crime(type, typeDescription, latitude,
-                longitude, sDate, block);
+        try {
+            String sDate = (String) j.get("date");
+            String type = (String) j.get("primary_type");
+            String typeDescription = (String) j.get("description");
+            String latitude = (String) j.get("latitude");
+            String longitude = (String) j.get("longitude");
+            String block = (String) j.get("block");
+            return new Crime(type, typeDescription, latitude,
+                    longitude, sDate, block);
+        }
+        catch(Exception e){
+            System.out.println("key not found!!");
+        }
+
+        return null;
     }
 
     public static List<Crime> createCrimeList(JSONArray jsonArr) throws java.text.ParseException {
@@ -83,7 +91,8 @@ public class Crimes {
         for(int i = 0; i < jsonArr.size(); i++){
             JSONObject json1 = (JSONObject) jsonArr.get(i);
             Crime newCrime = createCrime(json1);
-            listOfCrimes.add(newCrime);
+            if (newCrime != null){
+            listOfCrimes.add(newCrime);}
         }
         return listOfCrimes;
     }
