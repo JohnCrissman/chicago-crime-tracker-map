@@ -15,7 +15,7 @@ public class CrimeRelativeToAddress extends Crime {
     }
 
     public void setProximity(Address address) {
-        this.proximity = Distance.LatLongHelper.distanceBetweenTwoLocations(this.getAddress(), address);
+        this.proximity = AddressHelper.distanceBetweenTwoLocations(this.getAddress(), address);
     }
 
     @Override
