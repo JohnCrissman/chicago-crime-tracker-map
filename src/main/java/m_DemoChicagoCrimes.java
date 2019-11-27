@@ -1,9 +1,6 @@
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.*;
 import java.util.Scanner;
-
-import org.json.simple.parser.ParseException;
 
 
 public class m_DemoChicagoCrimes {
@@ -27,7 +24,7 @@ public class m_DemoChicagoCrimes {
             System.out.println("\tconverting \" " + userAddress+ " \" ...");
             try{
                 try{
-                    System.out.println(Distance.LatLongHelper.getLatLonAddrFromGoogleAPI(address));
+                    System.out.println(AddressHelper.getAddressFromGoogleAPI(address));
 
                 }catch (NotAnAddressException e){
                     System.out.println("Not a valid address. Please try a different one.");
@@ -41,6 +38,35 @@ public class m_DemoChicagoCrimes {
             }
             times++;
         }
+
+
+        /*
+            TODO: for BETH
+               (1) In the start method: uncomment // for now, starting view is crime list
+                                                    ScrollPane crimeList = createCrimeList();
+                                                    basePane.setCenter(crimeList);
+               (2)                      comment createMapView(basePane);
+               (3) Copy the following code the in addCrimesToListView() method, commenting the existent code
+            // <-- starts here
+            int[] i = {0};
+            try{
+                Crimes crimesObj = new Crimes();
+                crimesObj.getAllCrimes().stream()
+                        .peek((aCrime)-> i[0]++)
+                        .forEach((aCrime) -> {
+                            crimeList.add(new Text(aCrime.getDate().toString()), 1, i[0]);
+                            crimeList.add(new Text(aCrime.getTypeDescription()), 2, i[0]);
+                            crimeList.add(new Text(aCrime.getType()), 3, i[0]);
+                            crimeList.add(new Text(aCrime.getAddress().getFulAddress()), 4, i[0]);
+                        }
+            );
+            }catch (IOException e){
+
+            }catch (ParseException e){
+
+            }
+        // <-- ends here
+        */
 
 
 
