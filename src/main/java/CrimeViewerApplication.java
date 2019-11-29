@@ -13,7 +13,7 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import java.net.URL;
 
-public class b_DemoChicagoCrimes extends Application {
+public class CrimeViewerApplication extends Application {
 
     @Override
     public void start(Stage stage) {
