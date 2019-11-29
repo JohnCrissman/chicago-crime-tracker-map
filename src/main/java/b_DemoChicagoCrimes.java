@@ -1,6 +1,6 @@
 //from: http://fxexperience.com/2011/05/maps-in-javafx-2-0/
 //modifications from: https://o7planning.org/en/11151/javafx-webview-and-webengine-tutorial
-// local file: https://stackoverflow.com/questions/35703884/trying-to-load-a-local-page-into-javafx-webengine
+    // local file: https://stackoverflow.com/questions/35703884/trying-to-load-a-local-page-into-javafx-webengine
 
 //charts here: https://www.tutorialspoint.com/javafx/javafx_application.htm
 //layouts here: https://docs.oracle.com/javafx/2/layout/builtin_layouts.htm
@@ -53,9 +53,9 @@ public class b_DemoChicagoCrimes extends Application {
     private void createMapView(BorderPane basePane) {
         WebView webView = new WebView();
         WebEngine webEngine = webView.getEngine();
-        //Doesn't work yet: URL mapPage = this.getClass().getResource("b_mapdemo.html");
-        //webEngine.load(mapPage.toString());
-        webEngine.load("http://www.google.com");
+        URL mapPage = this.getClass().getResource("b_mapdemo.html");
+        webEngine.load(mapPage.toString());
+        //webEngine.load("http://www.google.com");
         basePane.setCenter(webView);
     }
 
