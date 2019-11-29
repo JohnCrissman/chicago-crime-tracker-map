@@ -84,7 +84,7 @@ public class b_DemoChicagoCrimes extends Application {
     }
 
     private ChoiceBox setUpRadiusMenu() {
-        ChoiceBox radius = new ChoiceBox();
+        ChoiceBox<String> radius = new ChoiceBox<>();
         radius.getItems().addAll
                 ("0.1 mi", "0.25 mi", "0.5 mi", "0.75 mi", "1 mi");
         radius.setValue("0.1 mi");
@@ -166,6 +166,7 @@ public class b_DemoChicagoCrimes extends Application {
         //create Exit button
         Button exitProgramButton = new Button("Exit");
         exitProgramButton.setPrefSize(100,20);
+        exitProgramButton.setOnAction(e -> System.exit(0));
 
         //add buttons to pane
         bottomMenu.getChildren().addAll(mapViewButton, listViewButton, exitProgramButton);
