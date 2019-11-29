@@ -3,9 +3,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -26,7 +24,7 @@ public class b_DemoChicagoCrimes extends Application {
 
         showMapView(basePane);
 
-        HBox bottomMenu = createBottomMenu(basePane);
+        BorderPane bottomMenu = createBottomMenu(basePane);
         basePane.setBottom(bottomMenu);
 
         //make visible
@@ -132,13 +130,14 @@ public class b_DemoChicagoCrimes extends Application {
         crimeList.add(address, 4, 0);
     }
 
-    private HBox createBottomMenu(BorderPane basePane) {
+    private BorderPane createBottomMenu(BorderPane basePane) {
         //create bottom pane and set up style
+        BorderPane bottomMenu2 = new BorderPane();
+        bottomMenu2.setPadding(new Insets(15, 12, 15, 12));
+        bottomMenu2.setStyle("-fx-background-color: green;");
+
         HBox bottomMenu = new HBox();
-        bottomMenu.setPadding(new Insets(15, 12, 15, 12));
-        bottomMenu.setSpacing(20);
-        bottomMenu.setStyle("-fx-background-color: green;");
-        bottomMenu.setAlignment(Pos.CENTER);
+        //bottomMenu.setAlignment(Pos.CENTER);
 
         Button mapViewButton = new Button("View Map");
         Button listViewButton = new Button("View List");
@@ -150,9 +149,9 @@ public class b_DemoChicagoCrimes extends Application {
             mapViewButton.setDisable(true);
             listViewButton.setDisable(false);
         });
+        mapViewButton.setDisable(true);
 
         //create View List button
-
         listViewButton.setPrefSize(100, 20);
         listViewButton.setOnAction(e -> {
             this.showCrimeList(basePane);
@@ -163,12 +162,29 @@ public class b_DemoChicagoCrimes extends Application {
         //create Exit button
         Button exitProgramButton = new Button("Exit");
         exitProgramButton.setPrefSize(100,20);
-        exitProgramButton.setOnAction(e -> System.exit(0));
+        exitProgramButton.setOnAction(e -> {
+            try {
+                this.stop();
+            } catch(Exception ex) {
+                System.out.println(ex.getMessage());
+            } } );
 
         //add buttons to pane
-        bottomMenu.getChildren().addAll(mapViewButton, listViewButton, exitProgramButton);
+        bottomMenu.getChildren().addAll(mapViewButton, listViewButton);
 
-        return bottomMenu;
+        bottomMenu2.setLeft(bottomMenu);
+        bottomMenu2.setRight(exitProgramButton);
+
+        return bottomMenu2;
+    }
+
+    @Override
+    public void stop() throws Exception {
+        try {
+            System.exit(0);
+        } catch (SecurityException ex) {
+            throw new Exception("Unable to quit program normally.");
+        }
     }
 
     public static void main(String[] args){
