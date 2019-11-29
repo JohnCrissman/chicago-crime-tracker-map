@@ -1,11 +1,3 @@
-//from: http://fxexperience.com/2011/05/maps-in-javafx-2-0/
-//modifications from: https://o7planning.org/en/11151/javafx-webview-and-webengine-tutorial
-    // local file: https://stackoverflow.com/questions/35703884/trying-to-load-a-local-page-into-javafx-webengine
-
-//charts here: https://www.tutorialspoint.com/javafx/javafx_application.htm
-//layouts here: https://docs.oracle.com/javafx/2/layout/builtin_layouts.htm
-//components: https://www.tutorialspoint.com/javafx/javafx_ui_controls.htm
-
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -31,9 +23,6 @@ public class b_DemoChicagoCrimes extends Application {
 
         HBox topMenu = createTopMenu();
         basePane.setTop(topMenu);
-
-        /*// for now, starting view is crime list
-        showCrimeList(basePane);*/
 
         showMapView(basePane);
 
