@@ -21,9 +21,7 @@ import javafx.scene.text.Text;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
-
 import java.net.URL;
-import java.text.DateFormat;
 
 public class b_DemoChicagoCrimes extends Application {
 
@@ -35,12 +33,11 @@ public class b_DemoChicagoCrimes extends Application {
         basePane.setTop(topMenu);
 
         /*// for now, starting view is crime list
-        ScrollPane crimeList = createCrimeList();
-        basePane.setCenter(crimeList);*/
+        showCrimeList(basePane);*/
 
-        createMapView(basePane);
+        showMapView(basePane);
 
-        HBox bottomMenu = createBottomMenu();
+        HBox bottomMenu = createBottomMenu(basePane);
         basePane.setBottom(bottomMenu);
 
         //make visible
@@ -48,15 +45,6 @@ public class b_DemoChicagoCrimes extends Application {
         stage.setScene(scene);
         stage.setTitle("Crimes in Chicago");
         stage.show();
-    }
-
-    private void createMapView(BorderPane basePane) {
-        WebView webView = new WebView();
-        WebEngine webEngine = webView.getEngine();
-        URL mapPage = this.getClass().getResource("b_mapdemo.html");
-        webEngine.load(mapPage.toString());
-        //webEngine.load("http://www.google.com");
-        basePane.setCenter(webView);
     }
 
     private HBox createTopMenu() {
@@ -98,7 +86,15 @@ public class b_DemoChicagoCrimes extends Application {
         return addr;
     }
 
-    private ScrollPane createCrimeList() {
+    private void showMapView(BorderPane basePane) {
+        WebView webView = new WebView();
+        WebEngine webEngine = webView.getEngine();
+        URL mapPage = this.getClass().getResource("b_mapdemo.html");
+        webEngine.load(mapPage.toString());
+        basePane.setCenter(webView);
+    }
+
+    private void showCrimeList(BorderPane basePane) {
         GridPane crimeList = new GridPane();
         crimeList.setStyle("-fx-background-color: pink;");
         crimeList.setHgap(10);
@@ -111,7 +107,7 @@ public class b_DemoChicagoCrimes extends Application {
         s.setFitToHeight(true);
         s.setFitToWidth(true);
         s.setContent(crimeList);
-        return s;
+        basePane.setCenter(s);
     }
 
     private void addCrimesToListView(GridPane crimeList) {
@@ -147,7 +143,7 @@ public class b_DemoChicagoCrimes extends Application {
         crimeList.add(address, 4, 0);
     }
 
-    private HBox createBottomMenu() {
+    private HBox createBottomMenu(BorderPane basePane) {
         //create bottom pane and set up style
         HBox bottomMenu = new HBox();
         bottomMenu.setPadding(new Insets(15, 12, 15, 12));
@@ -155,13 +151,25 @@ public class b_DemoChicagoCrimes extends Application {
         bottomMenu.setStyle("-fx-background-color: green;");
         bottomMenu.setAlignment(Pos.CENTER);
 
-        //create View Map button
         Button mapViewButton = new Button("View Map");
+        Button listViewButton = new Button("View List");
+
+        //create View Map button
         mapViewButton.setPrefSize(100, 20);
+        mapViewButton.setOnAction(e -> {
+            this.showMapView(basePane);
+            mapViewButton.setDisable(true);
+            listViewButton.setDisable(false);
+        });
 
         //create View List button
-        Button listViewButton = new Button("View List");
+
         listViewButton.setPrefSize(100, 20);
+        listViewButton.setOnAction(e -> {
+            this.showCrimeList(basePane);
+            listViewButton.setDisable(true);
+            mapViewButton.setDisable(false);
+        });
 
         //create Exit button
         Button exitProgramButton = new Button("Exit");
