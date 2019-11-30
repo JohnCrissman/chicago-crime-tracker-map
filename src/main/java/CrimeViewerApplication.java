@@ -21,22 +21,12 @@ public class CrimeViewerApplication extends Application {
 
     @Override
     public void init() {
-        /*int[] i = {0};
         try{
             this.latestCrimes = new Crimes();
-            this.latestCrimes.getAllCrimes().stream()
-                    .peek((aCrime)-> i[0]++)
-                    .forEach((aCrime) -> {
-                                crimeList.add(new Text(aCrime.getDate().toString()), 1, i[0]);
-                                crimeList.add(new Text(aCrime.getTypeDescription()), 2, i[0]);
-                                crimeList.add(new Text(aCrime.getType()), 3, i[0]);
-                                crimeList.add(new Text(aCrime.getAddress().getFulAddress()), 4, i[0]);
-                            }
-                    );
         }catch (IOException | ParseException e){
             System.out.println(e.getMessage());
             System.exit(1);
-        }*/
+        }
     }
 
     @Override
@@ -62,7 +52,7 @@ public class CrimeViewerApplication extends Application {
         HBox topMenu = new HBox();
         setUpTopMenuStyle(topMenu, "-fx-background-color: blue;");
         TextField addr = setUpAddressSearch();
-        ChoiceBox radius = setUpRadiusMenu();
+        ChoiceBox<String> radius = setUpRadiusMenu();
         Button search = setUpSearchButton(addr, radius);
         topMenu.getChildren().addAll(addr, radius, search);
 
@@ -89,7 +79,7 @@ public class CrimeViewerApplication extends Application {
         return searchButton;
     }
 
-    private ChoiceBox setUpRadiusMenu() {
+    private ChoiceBox<String> setUpRadiusMenu() {
         ChoiceBox<String> radius = new ChoiceBox<>();
         radius.getItems().addAll
                 ("0.1 mi", "0.25 mi", "0.5 mi", "0.75 mi", "1 mi");
@@ -129,7 +119,18 @@ public class CrimeViewerApplication extends Application {
     }
 
     private void addCrimesToListView(GridPane crimeList) {
-        /*Text type;
+        int[] i = {0};
+        this.latestCrimes.getAllCrimes().stream()
+                .peek((aCrime)-> i[0]++)
+                .forEach((aCrime) -> {
+                            crimeList.add(new Text(aCrime.getDate().toString()), 1, i[0]);
+                            crimeList.add(new Text(aCrime.getTypeDescription()), 2, i[0]);
+                            crimeList.add(new Text(aCrime.getType()), 3, i[0]);
+                            crimeList.add(new Text(aCrime.getAddress().getFullAddress()), 4, i[0]);
+                        }
+                );
+        /* Populate list with dummy information
+        Text type;
         Text description;
         Text date;
         Text address;
