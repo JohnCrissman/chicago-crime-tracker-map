@@ -50,7 +50,9 @@ public class CrimeViewerApplication extends Application {
 
     private HBox createTopMenu() {
         HBox topMenu = new HBox();
-        setUpTopMenuStyle(topMenu, "-fx-background-color: blue;");
+        setPaneStyle(topMenu, "blue");
+        topMenu.setSpacing(10);
+        topMenu.setAlignment(Pos.CENTER);
         TextField addr = setUpAddressSearch();
         ChoiceBox<String> radius = setUpRadiusMenu();
         Button search = setUpSearchButton(addr, radius);
@@ -59,11 +61,9 @@ public class CrimeViewerApplication extends Application {
         return topMenu;
     }
 
-    private void setUpTopMenuStyle(HBox topMenu, String s) {
-        topMenu.setPadding(new Insets(15, 12, 15, 12));
-        topMenu.setSpacing(10);
-        topMenu.setStyle(s);
-        topMenu.setAlignment(Pos.CENTER);
+    private void setPaneStyle(Pane menu, String colorName) {
+        menu.setPadding(new Insets(15, 12, 15, 12));
+        menu.setStyle("-fx-background-color: " + colorName + ";");
     }
 
     private Button setUpSearchButton(TextField addr, ChoiceBox<String> radius) {
@@ -104,10 +104,9 @@ public class CrimeViewerApplication extends Application {
 
     private void showCrimeList(BorderPane basePane) {
         GridPane crimeList = new GridPane();
-        crimeList.setStyle("-fx-background-color: pink;");
+        setPaneStyle(crimeList, "pink");
         crimeList.setHgap(10);
         crimeList.setVgap(10);
-        crimeList.setPadding(new Insets(10, 20, 10, 20));
         crimeList.setAlignment(Pos.CENTER);
         setUpListHeaders(crimeList);
         addCrimesToListView(crimeList);
