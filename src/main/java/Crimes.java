@@ -5,6 +5,7 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -64,12 +65,8 @@ public class Crimes {
         String fullUrl = url + url_dateRange;
         System.out.println(fullUrl);
         System.out.println(url);
-        try {
-            return url + "?$where=" + URLEncoder.encode(url_dateRange, "UTF-8");
-        }catch(UnsupportedEncodingException e){
-            System.out.println("oops, i did it again!");
-        }
-        return "";
+        return url + "?$where=" + URLEncoder.encode(url_dateRange, StandardCharsets.UTF_8);
+        //return "";
 //        return "https://data.cityofchicago.org/resource/ijzp-q8t2.json?$where=date between '2019-09-01T12:00:00' and '2019-11-01T12:00:00'";
     }
 
@@ -87,9 +84,10 @@ public class Crimes {
         for(int i = 0; i < jsonArr.size(); i++){
             JSONObject json1 = (JSONObject) jsonArr.get(i);
             Crime newCrime = createCrime(json1);
-            System.out.println(newCrime);
-            if (newCrime != null){
-            listOfCrimes.add(newCrime);}
+            //System.out.println(newCrime);
+            if (newCrime != null) {
+            listOfCrimes.add(newCrime);
+            }
         }
         return listOfCrimes;
     }
