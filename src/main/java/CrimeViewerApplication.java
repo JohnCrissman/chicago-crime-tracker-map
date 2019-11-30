@@ -11,9 +11,33 @@ import javafx.scene.text.Text;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import org.json.simple.parser.ParseException;
+
+import java.io.IOException;
 import java.net.URL;
 
 public class CrimeViewerApplication extends Application {
+    private Crimes latestCrimes;
+
+    @Override
+    public void init() {
+        /*int[] i = {0};
+        try{
+            this.latestCrimes = new Crimes();
+            this.latestCrimes.getAllCrimes().stream()
+                    .peek((aCrime)-> i[0]++)
+                    .forEach((aCrime) -> {
+                                crimeList.add(new Text(aCrime.getDate().toString()), 1, i[0]);
+                                crimeList.add(new Text(aCrime.getTypeDescription()), 2, i[0]);
+                                crimeList.add(new Text(aCrime.getType()), 3, i[0]);
+                                crimeList.add(new Text(aCrime.getAddress().getFulAddress()), 4, i[0]);
+                            }
+                    );
+        }catch (IOException | ParseException e){
+            System.out.println(e.getMessage());
+            System.exit(1);
+        }*/
+    }
 
     @Override
     public void start(Stage stage) {
@@ -39,7 +63,7 @@ public class CrimeViewerApplication extends Application {
         setUpTopMenuStyle(topMenu, "-fx-background-color: blue;");
         TextField addr = setUpAddressSearch();
         ChoiceBox radius = setUpRadiusMenu();
-        Button search = setUpSearchButton();
+        Button search = setUpSearchButton(addr, radius);
         topMenu.getChildren().addAll(addr, radius, search);
 
         return topMenu;
@@ -52,10 +76,17 @@ public class CrimeViewerApplication extends Application {
         topMenu.setAlignment(Pos.CENTER);
     }
 
-    private Button setUpSearchButton() {
-        Button search = new Button("Search");
-        search.setPrefSize(100, 20);
-        return search;
+    private Button setUpSearchButton(TextField addr, ChoiceBox<String> radius) {
+        Button searchButton = new Button("Search");
+        searchButton.setPrefSize(100, 20);
+        searchButton.setOnAction(e -> {
+            String searchQuery = addr.getCharacters().toString();
+            String radiusSelection = radius.valueProperty().get();
+            double radiusValue = Double.parseDouble(radiusSelection.split(" ")[0]);
+            System.out.println("Address search: " + searchQuery + ", \tRadius: " + radiusValue + " mi");
+            //TODO: execute API/ crimesRelativeTo tasks
+        });
+        return searchButton;
     }
 
     private ChoiceBox setUpRadiusMenu() {
@@ -98,7 +129,7 @@ public class CrimeViewerApplication extends Application {
     }
 
     private void addCrimesToListView(GridPane crimeList) {
-        Text type;
+        /*Text type;
         Text description;
         Text date;
         Text address;
@@ -112,7 +143,7 @@ public class CrimeViewerApplication extends Application {
             crimeList.add(description, 3, i);
             crimeList.add(address, 4, i);
 
-        }
+        }*/
     }
 
     private void setUpListHeaders(GridPane crimeList) {
