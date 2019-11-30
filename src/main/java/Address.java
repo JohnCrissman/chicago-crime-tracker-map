@@ -1,6 +1,6 @@
 public class Address{
-    private static final double LATINMILES = 69.0;
-    private static final double LONGINMILES = 53.0;
+    private static final double LAT_IN_MILES = 69.0;
+    private static final double LONG_IN_MILES = 53.0;
 
     private double latitude;
     private double longitude;
@@ -52,11 +52,11 @@ public class Address{
     }
 
     public double getLatInMiles() {
-        return this.latitude*LATINMILES;
+        return this.latitude* LAT_IN_MILES;
     }
 
     public double getLongInMiles() {
-        return this.longitude*LONGINMILES;
+        return this.longitude* LONG_IN_MILES;
     }
 
     public String getFullAddress(){
