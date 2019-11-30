@@ -81,14 +81,22 @@ public class Crimes {
     private static List<Crime> createCrimeList(JSONArray jsonArr) {
         List<Crime> listOfCrimes = new ArrayList<>();
 
-        for(int i = 0; i < jsonArr.size(); i++){
+        for(Object o : jsonArr) {
+            JSONObject jsonItem = (JSONObject) o;
+            Crime newCrime = createCrime(jsonItem);
+            //System.out.println(newCrime);
+            if (newCrime != null) {
+                listOfCrimes.add(newCrime);
+            }
+        }
+        /*for(int i = 0; i < jsonArr.size(); i++){
             JSONObject json1 = (JSONObject) jsonArr.get(i);
             Crime newCrime = createCrime(json1);
             //System.out.println(newCrime);
             if (newCrime != null) {
             listOfCrimes.add(newCrime);
             }
-        }
+        }*/
         return listOfCrimes;
     }
 
