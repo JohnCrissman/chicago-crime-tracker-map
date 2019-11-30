@@ -59,7 +59,7 @@ public class Address{
         return this.longitude*LONGINMILES;
     }
 
-    public String getFulAddress(){
+    public String getFullAddress(){
         return this.block + " " + this.street;
     }
 
