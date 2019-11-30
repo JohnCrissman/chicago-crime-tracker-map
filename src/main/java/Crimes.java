@@ -100,17 +100,23 @@ public class Crimes {
     }
 
     private static Crime createCrime(JSONObject j) {
+        String sDate = (String) j.get("date");
+        String type = (String) j.get("primary_type");
+        String typeDescription = (String) j.get("description");
+        String latitude = (String) j.get("latitude");
+        String longitude = (String) j.get("longitude");
+        String block = (String) j.get("block");
         try {
-            String sDate = (String) j.get("date");
-            String type = (String) j.get("primary_type");
-            String typeDescription = (String) j.get("description");
-            String latitude = (String) j.get("latitude");
-            String longitude = (String) j.get("longitude");
-            String block = (String) j.get("block");
             return new Crime(type, typeDescription, latitude, longitude, sDate, block);
         }
-        catch(Exception e){
-            System.out.println("key not found!!");
+        catch(java.text.ParseException e){
+            System.out.println("Not a number, dropped crime: ");
+            System.out.println("Date: " + sDate + ", type: " + type + ", descr: " + typeDescription
+                    + ", Lat: " + latitude + ", Long: " + longitude + ", Block:" + block);
+        } catch(NullPointerException e) {
+            System.out.println("Null field, dropped crime: ");
+            System.out.println("Date: " + sDate + ", type: " + type + ", descr: " + typeDescription
+                    + ", Lat: " + latitude + ", Long: " + longitude + ", Block:" + block);
         }
 
         return null;
