@@ -3,7 +3,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -20,9 +19,9 @@ public class Crimes {
 
     public Crimes() throws ParseException, IOException {
         String url = "https://data.cityofchicago.org/resource/ijzp-q8t2.json";
-        int numOfweeks = 2;
+        int numOfWeeks = 2;
 
-        query(url, numOfweeks);
+        query(url, numOfWeeks);
     }
 
     public List<Crime> getAllCrimes(){
