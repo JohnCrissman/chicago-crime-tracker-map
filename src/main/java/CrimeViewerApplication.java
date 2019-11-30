@@ -15,9 +15,12 @@ import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
 
 public class CrimeViewerApplication extends Application {
     private Crimes latestCrimes;
+    private WebView mapView;
+    private ScrollPane listView;
 
     @Override
     public void init() {
@@ -36,7 +39,9 @@ public class CrimeViewerApplication extends Application {
         HBox topMenu = createTopMenu();
         basePane.setTop(topMenu);
 
-        showMapView(basePane);
+        this.listView = setUpListView();
+        this.mapView = setUpMapView();
+        basePane.setCenter(this.mapView);
 
         BorderPane bottomMenu = createBottomMenu(basePane);
         basePane.setBottom(bottomMenu);
@@ -94,37 +99,48 @@ public class CrimeViewerApplication extends Application {
         return addr;
     }
 
-    private void showMapView(BorderPane basePane) {
+    private WebView setUpMapView() {
         WebView webView = new WebView();
         WebEngine webEngine = webView.getEngine();
         URL mapPage = this.getClass().getResource("b_mapdemo.html");
         webEngine.load(mapPage.toString());
-        basePane.setCenter(webView);
+
+        return webView;
     }
 
-    private void showCrimeList(BorderPane basePane) {
+    private ScrollPane setUpListView() {
         GridPane crimeList = new GridPane();
+        //style
         setPaneStyle(crimeList, "pink");
         crimeList.setHgap(10);
         crimeList.setVgap(10);
         crimeList.setAlignment(Pos.CENTER);
-        setUpListHeaders(crimeList);
-        addCrimesToListView(crimeList);
+        //set up scrollable
         ScrollPane s = new ScrollPane();
         s.setFitToHeight(true);
         s.setFitToWidth(true);
         s.setContent(crimeList);
-        basePane.setCenter(s);
+
+        //header row
+        setUpListHeaders(crimeList);
+
+        //table contents
+        addCrimesToListView(crimeList);
+
+        return s;
     }
 
     private void addCrimesToListView(GridPane crimeList) {
         int[] i = {0};
+        //TODO: Type/description to normal case
+        //TODO: In address, remove leading 0's and replace XX with 00
         this.latestCrimes.getAllCrimes().stream()
                 .peek((aCrime)-> i[0]++)
                 .forEach((aCrime) -> {
-                            crimeList.add(new Text(aCrime.getDate().toString()), 1, i[0]);
-                            crimeList.add(new Text(aCrime.getTypeDescription()), 2, i[0]);
-                            crimeList.add(new Text(aCrime.getType()), 3, i[0]);
+                            crimeList.add(new Text(DateFormat.getDateInstance().format(aCrime.getDate())), 1, i[0]);
+                            //crimeList.add(new Text(aCrime.getDate().toString()), 1, i[0]);
+                            crimeList.add(new Text(aCrime.getType()), 2, i[0]);
+                            crimeList.add(new Text(aCrime.getTypeDescription()), 3, i[0]);
                             crimeList.add(new Text(aCrime.getAddress().getFullAddress()), 4, i[0]);
                         }
                 );
@@ -149,11 +165,11 @@ public class CrimeViewerApplication extends Application {
     private void setUpListHeaders(GridPane crimeList) {
         Text type = new Text("Type of crime");
         type.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        Text description = new Text("Description of the crime");
+        Text description = new Text("Description");
         description.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        Text date = new Text("Date of crime");
+        Text date = new Text("Date");
         date.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        Text address = new Text("Address");
+        Text address = new Text("Nearest block");
         address.setFont(Font.font("Arial", FontWeight.BOLD, 20));
         crimeList.add(date, 1, 0);
         crimeList.add(type, 2, 0);
@@ -176,7 +192,7 @@ public class CrimeViewerApplication extends Application {
         //create View Map button
         mapViewButton.setPrefSize(100, 20);
         mapViewButton.setOnAction(e -> {
-            this.showMapView(basePane);
+            basePane.setCenter(this.mapView);
             mapViewButton.setDisable(true);
             listViewButton.setDisable(false);
         });
@@ -185,7 +201,7 @@ public class CrimeViewerApplication extends Application {
         //create View List button
         listViewButton.setPrefSize(100, 20);
         listViewButton.setOnAction(e -> {
-            this.showCrimeList(basePane);
+            basePane.setCenter(this.listView);
             listViewButton.setDisable(true);
             mapViewButton.setDisable(false);
         });
