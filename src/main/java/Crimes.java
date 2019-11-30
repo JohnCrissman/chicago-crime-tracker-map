@@ -110,10 +110,9 @@ public class Crimes {
             return new Crime(type, typeDescription, latitude, longitude, sDate, block);
         }
         catch(java.text.ParseException e){
-            System.out.println("Not a number, dropped crime: ");
-            System.out.println("Date: " + sDate + ", type: " + type + ", descr: " + typeDescription
-                    + ", Lat: " + latitude + ", Long: " + longitude + ", Block:" + block);
+            System.out.println("Not a number, dropped crime.");
         } catch(NullPointerException e) {
+            //TODO: If lat/long are the only nulls, we could probably use APITalker with block?
             System.out.println("Null field, dropped crime: ");
             System.out.println("Date: " + sDate + ", type: " + type + ", descr: " + typeDescription
                     + ", Lat: " + latitude + ", Long: " + longitude + ", Block:" + block);
