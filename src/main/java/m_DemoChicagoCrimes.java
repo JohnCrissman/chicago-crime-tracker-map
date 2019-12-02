@@ -1,11 +1,16 @@
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Scanner;
 
 
 public class m_DemoChicagoCrimes {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, ParseException {
         System.out.println("Hello from Mari Demo");
 
         //        url that is going to be queried
@@ -38,8 +43,7 @@ public class m_DemoChicagoCrimes {
             }
             times++;
         }
-
-
+// *****************************************************************************************
         /*
             TODO: for BETH
                (1) In the start method: uncomment // for now, starting view is crime list
@@ -73,20 +77,21 @@ public class m_DemoChicagoCrimes {
 //        try {
 // *************************************************************************************************************
 //            **************
-//            example for an API all expecting a Json Array as a response
+//            TODO: example for an API all expecting a Json Array as a response
 
-//            JSONArray jsonArr = m_APITalker.getArrayResponse(jsonUrl);
+//            String jsonUrl  = "https://data.cityofchicago.org/resource/ijzp-q8t2.json?$where=" + URLEncoder.encode("date between '2019-11-13T16:09:24' and '2019-11-27T16:09:24'");
+//            JSONArray jsonArr = APITalker.getArrayResponse(jsonUrl, true);
 //            System.out.println("This is the response\n\t" + jsonArr);
 
 //            String fakeJsonString = "[\"results\": {\"boo\": \"john\",\"oboo\": \"mari\"}]";
-//            JSONArray jarr = m_APITalker.getJsonFromString(fakeJsonString, new JSONArray(), true);
+//            JSONArray jarr = APITalker.getJsonFromString(fakeJsonString, new JSONArray(), true);
 //            System.out.println(jarr);
 
 
 //            **************
-//            example for an API all expecting a Json Object as a response
+//            TODO: example for an API all expecting a Json Object as a response
 
-//            JSONObject jsonObj = m_APITalker.getObjectResponse(query_url, false);
+//            JSONObject jsonObj = APITalker.getObjectResponse(query_url, false);
 //            System.out.println("This is the response\n\t" + jsonObj);
 
 // *************************************************************************************************************
