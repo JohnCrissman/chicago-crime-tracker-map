@@ -41,7 +41,7 @@ public class m_Dummy {
                             .stream()
                             .sorted((cp1,cp2) -> (int)(cp1.getProximity() - cp2.getProximity()))
 //                             .map(crime -> crime.getAddress())
-                            .limit(10)
+//                            .limit(10)
                             .collect(toList())) + "', '" + latestCrimes.getRelativeAddress().toString() + "')";
 
         }else{
@@ -49,7 +49,7 @@ public class m_Dummy {
                     JSONArray.toJSONString(latestCrimes.getAllCrimes()
                             .stream()
 //                             .map(crime -> crime.getAddress())
-                            .limit(5)
+//                            .limit(5)
                             .collect(toList())) + "', '" + latestCrimes.getRelativeAddress().toString() + "')";
         }
 
