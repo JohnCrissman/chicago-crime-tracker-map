@@ -22,7 +22,15 @@ public class Crimes {
         int numOfWeeks = 2;
 
         query(url, numOfWeeks);
+        this.relativeAddress = new Address();
+        this.radius = 0.0;
     }
+
+    public Address getRelativeAddress(){
+        return this.relativeAddress;
+    }
+
+    public double getRadius(){return this.radius;}
 
     public List<Crime> getAllCrimes(){
         return this.crimes;
