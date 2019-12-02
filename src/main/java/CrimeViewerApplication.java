@@ -151,8 +151,9 @@ public class CrimeViewerApplication extends Application {
         int[] i = {0};
         //TODO: Type/description to normal case
         //TODO: In address, remove leading 0's and replace XX with 00
-        this.latestCrimes.getAllCrimes().stream()
+        this.latestCrimes.getCrimesRelativeTo().stream()
                 .peek((aCrime)-> i[0]++)
+                .sorted((cp1,cp2) -> (int)(cp1.getProximity() - cp2.getProximity()))
                 .forEach((aCrime) -> {
                             crimeList.add(new Text(DateFormat.getDateInstance().format(aCrime.getDate())), 1, i[0]);
                             //crimeList.add(new Text(aCrime.getDate().toString()), 1, i[0]);
@@ -218,6 +219,9 @@ public class CrimeViewerApplication extends Application {
         //create View List button
         listViewButton.setPrefSize(100, 20);
         listViewButton.setOnAction(e -> {
+            //TODO: show the search on the list
+//             this.latestCrimes.getCrimesRelativeTo()
+//            updateCrimesRelativeToListView(???????????????)
             basePane.setCenter(this.listView);
             listViewButton.setDisable(true);
             mapViewButton.setDisable(false);
