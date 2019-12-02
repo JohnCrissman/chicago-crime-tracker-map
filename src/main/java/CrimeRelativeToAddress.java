@@ -18,9 +18,15 @@ public class CrimeRelativeToAddress extends Crime {
         this.proximity = AddressHelper.distanceBetweenTwoLocations(this.getAddress(), address);
     }
 
+    public double getProximity(){
+        return this.proximity;
+    }
+
     @Override
     public String toString() {
-        return super.toString() + " [prox: "+this.proximity+"]";
+
+        String crimeStr = super.toString();
+        return crimeStr.substring(0,crimeStr.length()-1) + ", \"proximity\": \""+this.proximity+"\"}";
     }
 
 }
