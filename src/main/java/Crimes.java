@@ -19,7 +19,7 @@ public class Crimes {
 
     public Crimes() throws ParseException, IOException {
         String url = "https://data.cityofchicago.org/resource/ijzp-q8t2.json";
-        int numOfWeeks = 2;
+        int numOfWeeks = 4;
 
         query(url, numOfWeeks);
         this.relativeAddress = new Address();
@@ -69,10 +69,10 @@ public class Crimes {
         String previous2 = previous.toString().split("\\.")[0];
 
         String url_dateRange = "date between '" + previous2+ "' and '" + today2 + "'";
-        String fullUrl = url + url_dateRange;
-        System.out.println(fullUrl);
-        System.out.println(url);
-        return url + "?$where=" + URLEncoder.encode(url_dateRange, StandardCharsets.UTF_8);
+//        String fullUrl = url + url_dateRange;
+//        System.out.println(fullUrl);
+//        System.out.println(url);
+        return url + "?$limit=10000&$where=" + URLEncoder.encode(url_dateRange, StandardCharsets.UTF_8);
         //return "";
 //        return "https://data.cityofchicago.org/resource/ijzp-q8t2.json?$where=date between '2019-09-01T12:00:00' and '2019-11-01T12:00:00'";
     }
@@ -80,7 +80,7 @@ public class Crimes {
 
     private void query(String url, int numOfPastWeeks) throws IOException, ParseException{
         String fullUrl = getFullURL(url, numOfPastWeeks);
-
+        System.out.println(fullUrl);
         JSONArray jsonArr = APITalker.getArrayResponse(fullUrl, false);
         this.crimes = createCrimeList(jsonArr);
     }
