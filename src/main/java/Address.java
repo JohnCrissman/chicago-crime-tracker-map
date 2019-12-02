@@ -8,10 +8,10 @@ public class Address{
     private String block; // from block, ie: 0078XX
 
     public Address(){
-        this.latitude = 0.0;
-        this.longitude = 0.0;
-        this.street = "";
-        this.block = "";
+        this.latitude = 41.9803467;
+        this.longitude = -87.7191019;
+        this.street = "N St Louis Ave, Chicago, IL 60625";
+        this.block = "5500";
     }
 
     public Address (double latitude, double longitude, String block){
@@ -65,7 +65,7 @@ public class Address{
 
     @Override
     public String toString(){
-        return this.block + " " + this.street + " (" + this.latitude+"\" "+ + this.longitude+ "\")";
+        return "{ \"block\" : \"" + this.block + "\", \"street\" : \"" + this.street + "\", \"lat\" : \"" + this.latitude+"\", \"long\" : \""+this.longitude+ "\"}";
     }
 
 }

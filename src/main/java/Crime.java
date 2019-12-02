@@ -57,10 +57,13 @@ public class Crime {
     public Date getDate(){
         return this.date;
     }
-    public String getTypeDescription(){ return this.typeDescription;}
+    public String getTypeDescription(){ return this.typeDescription; }
 
     @Override
     public String toString(){
-        return this.type + ": " + this.address + ", " + this.date;
+        return "{\"type\": \"" + this.getType() + "\"," +
+                " \"typeDescription\": \"" +this.typeDescription + "\"," +
+                " \"address\": " +this.getAddress()+"," +
+                " \"date\": \""+ this.getDate() +"\"}";
     }
 }
