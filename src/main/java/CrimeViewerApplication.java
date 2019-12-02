@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 
+
 public class CrimeViewerApplication extends Application {
     private Crimes latestCrimes;
     private WebView mapView;
@@ -80,6 +81,22 @@ public class CrimeViewerApplication extends Application {
             double radiusValue = Double.parseDouble(radiusSelection.split(" ")[0]);
             System.out.println("Address search: " + searchQuery + ", \tRadius: " + radiusValue + " mi");
             //TODO: execute API/ crimesRelativeTo tasks
+
+            try {
+                this.latestCrimes.setCrimesWithinRadius(radiusValue, searchQuery);
+                m_Dummy.execJsFunc(this.mapView, this.latestCrimes, "rel");
+
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            } catch (NotARadiusException ex) {
+                ex.printStackTrace();
+                System.out.println("not a valid radius");
+            } catch (NotAnAddressException ex) {
+//                TODO: send a message to the user saying "No results. Enter a different address"
+                ex.printStackTrace();
+                System.out.println("not an address");
+            }
+
         });
         return searchButton;
     }
@@ -87,14 +104,14 @@ public class CrimeViewerApplication extends Application {
     private ChoiceBox<String> setUpRadiusMenu() {
         ChoiceBox<String> radius = new ChoiceBox<>();
         radius.getItems().addAll
-                ("0.1 mi", "0.25 mi", "0.5 mi", "0.75 mi", "1 mi");
+                ("0.1 mi", "0.25 mi", "0.5 mi", "0.75 mi", "1 mi", "2 mi", "5 mi");
         radius.setValue("0.1 mi");
         radius.setPrefWidth(100);
         return radius;
     }
 
     private TextField setUpAddressSearch() {
-        TextField addr = new TextField("Address");
+        TextField addr = new TextField("5500 N St Louis Ave");
         addr.setPrefWidth(400);
         return addr;
     }
@@ -217,7 +234,11 @@ public class CrimeViewerApplication extends Application {
             } } );
 
         //add buttons to pane
-        bottomMenu.getChildren().addAll(mapViewButton, listViewButton);
+        bottomMenu.getChildren().addAll(
+                mapViewButton,
+                listViewButton,
+                m_Dummy.createDummyBtn(mapView, latestCrimes) //TODO: <---- MARI should ERASE this method call
+        );
 
         bottomMenu2.setLeft(bottomMenu);
         bottomMenu2.setRight(exitProgramButton);
