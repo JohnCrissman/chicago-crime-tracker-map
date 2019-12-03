@@ -50,7 +50,7 @@ public class CrimeViewerApplication extends Application {
 
         this.listView = setUpTableView();
         this.mapView = setUpMapView();
-        basePane.setCenter(this.listView);
+        basePane.setCenter(this.mapView);
 
         BorderPane bottomMenu = createBottomMenu(basePane);
         basePane.setBottom(bottomMenu);
@@ -64,7 +64,7 @@ public class CrimeViewerApplication extends Application {
 
     private HBox createTopMenu() {
         HBox topMenu = new HBox();
-        setPaneStyle(topMenu, "blue");
+        setPaneStyle(topMenu, "#b6b6af");
         topMenu.setSpacing(10);
         topMenu.setAlignment(Pos.CENTER);
         TextField addr = setUpAddressSearch();
@@ -75,9 +75,9 @@ public class CrimeViewerApplication extends Application {
         return topMenu;
     }
 
-    private void setPaneStyle(Pane menu, String colorName) {
+    private void setPaneStyle(Pane menu, String color) {
         menu.setPadding(new Insets(15, 12, 15, 12));
-        menu.setStyle("-fx-background-color: " + colorName + ";");
+        menu.setStyle("-fx-background-color: " + color+ ";");
     }
 
     private Button setUpSearchButton(TextField addr, ChoiceBox<String> radius) {
@@ -188,12 +188,10 @@ public class CrimeViewerApplication extends Application {
 
     private BorderPane createBottomMenu(BorderPane basePane) {
         //create bottom pane and set up style
-        BorderPane bottomMenu2 = new BorderPane();
-        bottomMenu2.setPadding(new Insets(15, 12, 15, 12));
-        bottomMenu2.setStyle("-fx-background-color: green;");
+        BorderPane fullBottomMenu = new BorderPane();
+        setPaneStyle(fullBottomMenu, " #b6b6af");
 
-        HBox bottomMenu = new HBox();
-        //bottomMenu.setAlignment(Pos.CENTER);
+        HBox changeViewPalette = new HBox();
 
         Button mapViewButton = new Button("View Map");
         Button listViewButton = new Button("View List");
@@ -218,6 +216,13 @@ public class CrimeViewerApplication extends Application {
             mapViewButton.setDisable(false);
         });
 
+        //add buttons to pane
+        changeViewPalette.getChildren().addAll(
+                mapViewButton,
+                listViewButton,
+                m_Dummy.createDummyBtn(mapView, latestCrimes) //TODO: <---- MARI should ERASE this method call
+        );
+
         //create Exit button
         Button exitProgramButton = new Button("Exit");
         exitProgramButton.setPrefSize(100,20);
@@ -228,17 +233,10 @@ public class CrimeViewerApplication extends Application {
                 System.out.println(ex.getMessage());
             } } );
 
-        //add buttons to pane
-        bottomMenu.getChildren().addAll(
-                mapViewButton,
-                listViewButton,
-                m_Dummy.createDummyBtn(mapView, latestCrimes) //TODO: <---- MARI should ERASE this method call
-        );
+        fullBottomMenu.setLeft(changeViewPalette);
+        fullBottomMenu.setRight(exitProgramButton);
 
-        bottomMenu2.setLeft(bottomMenu);
-        bottomMenu2.setRight(exitProgramButton);
-
-        return bottomMenu2;
+        return fullBottomMenu;
     }
 
     @Override
