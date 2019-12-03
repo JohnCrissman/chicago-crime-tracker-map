@@ -62,7 +62,10 @@ public class Address{
     public String getFullAddress() {
         String cleanBlock = this.block;
         //remove leading 0's
-        cleanBlock = cleanBlock.split("[0]+", 2)[1];
+        try {
+            cleanBlock = cleanBlock.split("[0]+", 2)[1];
+        } catch(ArrayIndexOutOfBoundsException oob) {
+        }
         //change 41XX to 4100
         cleanBlock = cleanBlock.replaceFirst("[X]+", "00");
         return (cleanBlock + " " + this.street).toUpperCase();
