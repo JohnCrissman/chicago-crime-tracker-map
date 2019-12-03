@@ -12,16 +12,16 @@ import java.util.*;
 import static java.util.stream.Collectors.toList;
 
 public class Crimes {
-    private List<Crime> crimes; //list of loaded crimes for the past 2 weeks
+    private List<Crime> crimes; //list of loaded crimes for the past X weeks
     private List<CrimeRelativeToAddress> crimesRelativeTo;
     private double radius;  // in lat/long units
     private Address relativeAddress;
+    private final String CITY_DATA_URL = "https://data.cityofchicago.org/resource/ijzp-q8t2.json";
 
     public Crimes() throws ParseException, IOException {
-        String url = "https://data.cityofchicago.org/resource/ijzp-q8t2.json";
         int numOfWeeks = 4;
 
-        query(url, numOfWeeks);
+        query(CITY_DATA_URL, numOfWeeks);
         this.relativeAddress = new Address();
         this.radius = 0.0;
     }
