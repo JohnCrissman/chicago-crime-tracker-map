@@ -133,6 +133,9 @@ public class CrimeViewerApplication extends Application {
     }
 
     private ScrollPane setUpTableView() {
+        VBox vb = new VBox();
+        vb.getChildren().add(new Pane(new Label("Shift+click to sort by multiple columns.")));
+
         TableView<Crime> table = new TableView<>();
         table.setEditable(false);
 
@@ -149,9 +152,6 @@ public class CrimeViewerApplication extends Application {
         description.setMinWidth(300);
         description.setCellValueFactory(new PropertyValueFactory<>("typeDescription"));
 
-        /*TableColumn<Crime, Address> address = new TableColumn<>("Address");
-        address.setMinWidth(300);
-        address.setCellValueFactory(new PropertyValueFactory<>("address"));*/
         TableColumn<Crime, String> address = new TableColumn<>("Address");
         address.setMinWidth(300);
         address.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getAddress().getFullAddress()));
@@ -161,12 +161,14 @@ public class CrimeViewerApplication extends Application {
         //add data
         ObservableList<Crime> data = FXCollections.observableList(this.latestCrimes.getAllCrimes());
         table.setItems(data);
+        vb.getChildren().add(table);
+        // TODO: Make this child of vb extend to the bottom of the scrollable pane.
 
         //set up scrollable
         ScrollPane s = new ScrollPane();
         s.setFitToHeight(true);
         s.setFitToWidth(true);
-        s.setContent(table);
+        s.setContent(vb);
 
         return s;
     }
