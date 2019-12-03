@@ -29,6 +29,7 @@ public class CrimeViewerApplication extends Application {
     private Crimes latestCrimes;
     private WebView mapView;
     private ScrollPane listView;
+    private TableView<Crime> table;
 
     @Override
     public void init() {
@@ -136,8 +137,26 @@ public class CrimeViewerApplication extends Application {
         VBox vb = new VBox();
         vb.getChildren().add(new Pane(new Label("Shift+click to sort by multiple columns.")));
 
-        TableView<Crime> table = new TableView<>();
-        table.setEditable(false);
+        this.table = new TableView<>();
+        setUpNewTableView();
+
+        //add data
+        ObservableList<Crime> data = FXCollections.observableList(this.latestCrimes.getAllCrimes());
+        this.table.setItems(data);
+        vb.getChildren().add(this.table);
+        // TODO: Make this child of vb extend to the bottom of the scrollable pane.
+
+        //set up scrollable
+        ScrollPane s = new ScrollPane();
+        s.setFitToHeight(true);
+        s.setFitToWidth(true);
+        s.setContent(vb);
+
+        return s;
+    }
+
+    private void setUpNewTableView() {
+        this.table.setEditable(false);
 
         //set up columns
         TableColumn<Crime, Date> date = new TableColumn<>("Date");
@@ -156,23 +175,16 @@ public class CrimeViewerApplication extends Application {
         address.setMinWidth(300);
         address.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getAddress().getFullAddress()));
 
-        table.getColumns().addAll(date, type, description, address);
-
-        //add data
-        ObservableList<Crime> data = FXCollections.observableList(this.latestCrimes.getAllCrimes());
-        table.setItems(data);
-        vb.getChildren().add(table);
-        // TODO: Make this child of vb extend to the bottom of the scrollable pane.
-
-        //set up scrollable
-        ScrollPane s = new ScrollPane();
-        s.setFitToHeight(true);
-        s.setFitToWidth(true);
-        s.setContent(vb);
-
-        return s;
+        this.table.getColumns().addAll(date, type, description, address);
     }
-    
+
+    private void showNearbyCrimesInTableView() {
+        // TODO: Get this method to work (maybe table -> ? extends Crime, but that breaks other things)
+        /*this.table = new TableView<>();
+        setUpNewTableView();
+        ObservableList<Crime> data = FXCollections.observableList(this.latestCrimes.getCrimesRelativeTo());
+        this.table.setItems(data);*/
+    }
 
     private BorderPane createBottomMenu(BorderPane basePane) {
         //create bottom pane and set up style
