@@ -172,75 +172,7 @@ public class CrimeViewerApplication extends Application {
 
         return s;
     }
-    private ScrollPane setUpListView() {
-        GridPane crimeList = new GridPane();
-        //style
-        setPaneStyle(crimeList, "pink");
-        crimeList.setHgap(10);
-        crimeList.setVgap(10);
-        crimeList.setAlignment(Pos.CENTER);
-        //set up scrollable
-        ScrollPane s = new ScrollPane();
-        s.setFitToHeight(true);
-        s.setFitToWidth(true);
-        s.setContent(crimeList);
-
-        //header row
-        setUpListHeaders(crimeList);
-
-        //table contents
-        addCrimesToListView(crimeList);
-
-        return s;
-    }
-
-    private void addCrimesToListView(GridPane crimeList) {
-        int[] i = {0};
-        //TODO: Type/description to normal case
-        //TODO: In address, remove leading 0's and replace XX with 00
-        this.latestCrimes.getAllCrimes().stream()
-                .peek((aCrime)-> i[0]++)
-//                .sorted((cp1,cp2) -> (int)(cp1.getProximity() - cp2.getProximity()))
-                .forEach((aCrime) -> {
-                            crimeList.add(new Text(DateFormat.getDateInstance().format(aCrime.getDate())), 1, i[0]);
-                            //crimeList.add(new Text(aCrime.getDate().toString()), 1, i[0]);
-                            crimeList.add(new Text(aCrime.getType()), 2, i[0]);
-                            crimeList.add(new Text(aCrime.getTypeDescription()), 3, i[0]);
-                            crimeList.add(new Text(aCrime.getAddress().getFullAddress()), 4, i[0]);
-                        }
-                );
-        /* Populate list with dummy information
-        Text type;
-        Text description;
-        Text date;
-        Text address;
-        for(int i = 1; i < 100; i++) {
-            type = new Text("Battery");
-            description = new Text("Description");
-            date = new Text("11/26/2019");
-            address = new Text("5500 N St. Louis Ave, Chicago, IL");
-            crimeList.add(date, 1, i);
-            crimeList.add(type, 2, i);
-            crimeList.add(description, 3, i);
-            crimeList.add(address, 4, i);
-
-        }*/
-    }
-
-    private void setUpListHeaders(GridPane crimeList) {
-        Text type = new Text("Type of crime");
-        type.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        Text description = new Text("Description");
-        description.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        Text date = new Text("Date");
-        date.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        Text address = new Text("Nearest block");
-        address.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-        crimeList.add(date, 1, 0);
-        crimeList.add(type, 2, 0);
-        crimeList.add(description, 3, 0);
-        crimeList.add(address, 4, 0);
-    }
+    
 
     private BorderPane createBottomMenu(BorderPane basePane) {
         //create bottom pane and set up style
