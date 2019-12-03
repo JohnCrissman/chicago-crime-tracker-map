@@ -1,4 +1,6 @@
 import javafx.application.Application;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -14,6 +16,7 @@ import javafx.scene.text.Text;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
@@ -146,9 +149,12 @@ public class CrimeViewerApplication extends Application {
         description.setMinWidth(300);
         description.setCellValueFactory(new PropertyValueFactory<>("typeDescription"));
 
-        TableColumn<Crime, Address> address = new TableColumn<>("Address");
+        /*TableColumn<Crime, Address> address = new TableColumn<>("Address");
         address.setMinWidth(300);
-        address.setCellValueFactory(new PropertyValueFactory<>("address"));
+        address.setCellValueFactory(new PropertyValueFactory<>("address"));*/
+        TableColumn<Crime, String> address = new TableColumn<>("Address");
+        address.setMinWidth(300);
+        address.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getAddress().getFullAddress()));
 
         table.getColumns().addAll(date, type, description, address);
 
