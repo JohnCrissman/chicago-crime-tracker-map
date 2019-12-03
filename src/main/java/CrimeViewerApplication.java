@@ -1,8 +1,11 @@
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -16,6 +19,7 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
+import java.util.Date;
 
 
 public class CrimeViewerApplication extends Application {
@@ -40,9 +44,9 @@ public class CrimeViewerApplication extends Application {
         HBox topMenu = createTopMenu();
         basePane.setTop(topMenu);
 
-        this.listView = setUpListView();
+        this.listView = setUpTableView();
         this.mapView = setUpMapView();
-        basePane.setCenter(this.mapView);
+        basePane.setCenter(this.listView);
 
         BorderPane bottomMenu = createBottomMenu(basePane);
         basePane.setBottom(bottomMenu);
@@ -119,12 +123,47 @@ public class CrimeViewerApplication extends Application {
     private WebView setUpMapView() {
         WebView webView = new WebView();
         WebEngine webEngine = webView.getEngine();
-        URL mapPage = this.getClass().getResource("b_mapdemo.html");
+        URL mapPage = this.getClass().getResource("map.html");
         webEngine.load(mapPage.toString());
 
         return webView;
     }
 
+    private ScrollPane setUpTableView() {
+        TableView<Crime> table = new TableView<>();
+        table.setEditable(false);
+
+        //set up columns
+        TableColumn<Crime, Date> date = new TableColumn<>("Date");
+        date.setMinWidth(100);
+        date.setCellValueFactory(new PropertyValueFactory<Crime, Date>("date"));
+
+        TableColumn<Crime, String> type = new TableColumn<>("Type");
+        type.setMinWidth(150);
+        type.setCellValueFactory(new PropertyValueFactory<Crime, String>("type"));
+
+        TableColumn<Crime, String> description = new TableColumn<Crime, String>("Description");
+        description.setMinWidth(300);
+        description.setCellValueFactory(new PropertyValueFactory<Crime,String>("typeDescription"));
+
+        TableColumn<Crime, Address> address = new TableColumn<>("Address");
+        address.setMinWidth(300);
+        address.setCellValueFactory(new PropertyValueFactory<Crime,Address>("address"));
+
+        table.getColumns().addAll(date, type, description, address);
+
+        //add data
+        ObservableList<Crime> data = FXCollections.observableList(this.latestCrimes.getAllCrimes());
+        table.setItems(data);
+
+        //set up scrollable
+        ScrollPane s = new ScrollPane();
+        s.setFitToHeight(true);
+        s.setFitToWidth(true);
+        s.setContent(table);
+
+        return s;
+    }
     private ScrollPane setUpListView() {
         GridPane crimeList = new GridPane();
         //style
