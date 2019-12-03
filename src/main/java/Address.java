@@ -59,8 +59,13 @@ public class Address{
         return this.longitude* LONG_IN_MILES;
     }
 
-    public String getFullAddress(){
-        return this.block + " " + this.street;
+    public String getFullAddress() {
+        String cleanBlock = this.block;
+        //remove leading 0's
+        cleanBlock = cleanBlock.split("[0]+", 2)[1];
+        //change 41XX to 4100
+        cleanBlock = cleanBlock.replaceFirst("[X]+", "00");
+        return (cleanBlock + " " + this.street).toUpperCase();
     }
 
     @Override
