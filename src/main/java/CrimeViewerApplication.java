@@ -136,19 +136,19 @@ public class CrimeViewerApplication extends Application {
         //set up columns
         TableColumn<Crime, Date> date = new TableColumn<>("Date");
         date.setMinWidth(100);
-        date.setCellValueFactory(new PropertyValueFactory<Crime, Date>("date"));
+        date.setCellValueFactory(new PropertyValueFactory<>("date"));
 
         TableColumn<Crime, String> type = new TableColumn<>("Type");
         type.setMinWidth(150);
-        type.setCellValueFactory(new PropertyValueFactory<Crime, String>("type"));
+        type.setCellValueFactory(new PropertyValueFactory<>("type"));
 
-        TableColumn<Crime, String> description = new TableColumn<Crime, String>("Description");
+        TableColumn<Crime, String> description = new TableColumn<>("Description");
         description.setMinWidth(300);
-        description.setCellValueFactory(new PropertyValueFactory<Crime,String>("typeDescription"));
+        description.setCellValueFactory(new PropertyValueFactory<>("typeDescription"));
 
         TableColumn<Crime, Address> address = new TableColumn<>("Address");
         address.setMinWidth(300);
-        address.setCellValueFactory(new PropertyValueFactory<Crime,Address>("address"));
+        address.setCellValueFactory(new PropertyValueFactory<>("address"));
 
         table.getColumns().addAll(date, type, description, address);
 
