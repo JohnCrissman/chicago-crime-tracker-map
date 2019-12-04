@@ -24,7 +24,6 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.util.Date;
 
-
 public class CrimeViewerApplication extends Application {
     private Crimes latestCrimes;
     private WebView mapView;

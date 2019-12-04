@@ -1,16 +1,9 @@
 import java.util.Date;
 
 public class CrimeRelativeToAddress extends Crime {
-
     private double proximity;
 
-    public CrimeRelativeToAddress() {}
-
-    public CrimeRelativeToAddress(String type, Double latitude, Double longitude, Date date, String block){
-        super(type, latitude, longitude, date, block);
-    }
-
-    public CrimeRelativeToAddress(Crime crime){
+    public CrimeRelativeToAddress(Crime crime) {
         super(crime.getType(), crime.getDate(), crime.getAddress());
     }
 
@@ -24,7 +17,6 @@ public class CrimeRelativeToAddress extends Crime {
 
     @Override
     public String toString() {
-
         String crimeStr = super.toString();
         return crimeStr.substring(0,crimeStr.length()-1) + ", \"proximity\": \""+this.proximity+"\"}";
     }
