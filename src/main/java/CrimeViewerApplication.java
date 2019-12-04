@@ -30,6 +30,7 @@ public class CrimeViewerApplication extends Application {
     private WebView mapView;
     private ScrollPane listView;
     private TableView<Crime> table;
+    private BorderPane basePane;
 
     @Override
     public void init() {
@@ -43,17 +44,17 @@ public class CrimeViewerApplication extends Application {
 
     @Override
     public void start(Stage stage) {
-        BorderPane basePane = new BorderPane();
+        this.basePane = new BorderPane();
 
         HBox topMenu = createTopMenu();
-        basePane.setTop(topMenu);
+        this.basePane.setTop(topMenu);
 
         this.listView = setUpTableView();
         this.mapView = setUpMapView();
-        basePane.setCenter(this.mapView);
+        this.basePane.setCenter(this.mapView);
 
-        BorderPane bottomMenu = createBottomMenu(basePane);
-        basePane.setBottom(bottomMenu);
+        BorderPane bottomMenu = createBottomMenu(this.basePane);
+        this.basePane.setBottom(bottomMenu);
 
         //make visible
         Scene scene = new Scene(basePane, 1000, 700, Color.web("#666970"));
@@ -83,17 +84,25 @@ public class CrimeViewerApplication extends Application {
     private Button setUpSearchButton(TextField addr, ChoiceBox<String> radius) {
         Button searchButton = new Button("Search");
         searchButton.setPrefSize(100, 20);
+
         searchButton.setOnAction(e -> {
+            // get search query terms
             String searchQuery = addr.getCharacters().toString();
             String radiusSelection = radius.valueProperty().get();
             double radiusValue = Double.parseDouble(radiusSelection.split(" ")[0]);
             System.out.println("Address search: " + searchQuery + ", \tRadius: " + radiusValue + " mi");
-            //TODO: execute API/ crimesRelativeTo tasks
 
             try {
+                //update crimesRelativeTo in latestCrimes
                 this.latestCrimes.setCrimesWithinRadius(radiusValue, searchQuery);
-                m_Dummy.execJsFunc(this.mapView, this.latestCrimes, "rel");
 
+                // update map
+                //m_Dummy.execJsFunc(this.mapView, this.latestCrimes, "rel");
+
+                //update list
+                this.listView = setUpFilteredTableView();
+                //TODO: this current starts with listView, but maybe change?
+                this.basePane.setCenter(this.listView);
             } catch (IOException ex) {
                 ex.printStackTrace();
             } catch (NotARadiusException ex) {
@@ -131,6 +140,54 @@ public class CrimeViewerApplication extends Application {
         webEngine.load(mapPage.toString());
 
         return webView;
+    }
+
+    private ScrollPane setUpFilteredTableView() {
+        VBox vb = new VBox();
+        vb.getChildren().add(new Pane(new Label("Shift+click to sort by multiple columns.")));
+
+        TableView<CrimeRelativeToAddress> table = new TableView<>();
+        setUpNewFilteredTableView(table);
+
+        System.out.println(this.latestCrimes.getCrimesRelativeTo().size());
+
+        //add data
+        ObservableList<CrimeRelativeToAddress> data =
+                FXCollections.observableList(this.latestCrimes.getCrimesRelativeTo());
+        table.setItems(data);
+        vb.getChildren().add(table);
+        // TODO: Make this child of vb extend to the bottom of the scrollable pane.
+
+        //set up scrollable
+        ScrollPane s = new ScrollPane();
+        s.setFitToHeight(true);
+        s.setFitToWidth(true);
+        s.setContent(vb);
+
+        return s;
+    }
+
+    private void setUpNewFilteredTableView(TableView<CrimeRelativeToAddress> table) {
+        table.setEditable(false);
+
+        //set up columns
+        TableColumn<CrimeRelativeToAddress, Date> date = new TableColumn<>("Date");
+        date.setMinWidth(100);
+        date.setCellValueFactory(new PropertyValueFactory<>("date"));
+
+        TableColumn<CrimeRelativeToAddress, String> type = new TableColumn<>("Type");
+        type.setMinWidth(150);
+        type.setCellValueFactory(new PropertyValueFactory<>("type"));
+
+        TableColumn<CrimeRelativeToAddress, String> description = new TableColumn<>("Description");
+        description.setMinWidth(300);
+        description.setCellValueFactory(new PropertyValueFactory<>("typeDescription"));
+
+        TableColumn<CrimeRelativeToAddress, String> address = new TableColumn<>("Address");
+        address.setMinWidth(300);
+        address.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getAddress().getFullAddress()));
+
+        table.getColumns().addAll(date, type, description, address);
     }
 
     private ScrollPane setUpTableView() {
@@ -176,14 +233,6 @@ public class CrimeViewerApplication extends Application {
         address.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getAddress().getFullAddress()));
 
         this.table.getColumns().addAll(date, type, description, address);
-    }
-
-    private void showNearbyCrimesInTableView() {
-        // TODO: Get this method to work (maybe table -> ? extends Crime, but that breaks other things)
-        /*this.table = new TableView<>();
-        setUpNewTableView();
-        ObservableList<Crime> data = FXCollections.observableList(this.latestCrimes.getCrimesRelativeTo());
-        this.table.setItems(data);*/
     }
 
     private BorderPane createBottomMenu(BorderPane basePane) {
