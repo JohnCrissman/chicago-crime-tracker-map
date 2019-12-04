@@ -17,12 +17,15 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import org.json.simple.JSONArray;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.Date;
+
+import static java.util.stream.Collectors.toList;
 
 public class CrimeViewerApplication extends Application {
     private Crimes latestCrimes;
@@ -110,7 +113,7 @@ public class CrimeViewerApplication extends Application {
                 System.out.println(this.addressSearchResult);
 
                 // update map
-                m_Dummy.execJsFunc(this.mapView, this.latestCrimes, "rel");
+                execJsFunc();
 
                 //update list
                 this.listView = setUpFilteredTableView();
@@ -129,6 +132,17 @@ public class CrimeViewerApplication extends Application {
 
         });
         return searchButton;
+    }
+
+    private void execJsFunc() {
+        String jsFunctionCall;
+        jsFunctionCall = "showCrimesOnMap('" +
+                JSONArray.toJSONString(this.latestCrimes.getCrimesRelativeTo()
+                        .stream()
+                        .sorted((cp1,cp2) -> (int)(cp1.getProximity() - cp2.getProximity()))
+                        .collect(toList())) + "', '" + this.latestCrimes.getRelativeAddress().toString() + "')";
+
+        this.mapView.getEngine().executeScript(jsFunctionCall);
     }
 
     private WebView setUpMapView() {
@@ -252,8 +266,7 @@ public class CrimeViewerApplication extends Application {
         //add buttons to pane
         changeViewPalette.getChildren().addAll(
                 mapViewButton,
-                listViewButton,
-                m_Dummy.createDummyBtn(mapView, latestCrimes) //TODO: <---- MARI should ERASE this method call
+                listViewButton
         );
 
         //create exit button
