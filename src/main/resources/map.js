@@ -55,10 +55,10 @@ function showCrimesOnMap(cr, centerAddress){
 function crimeInfoWindow(c, i){
     return `<span> (${i+1}) </span>
     <h2>${c.type}</h2>
-    <h3>${c.typeDescription}</h3>
+    <h4>${c.typeDescription}</h4>
     <ul>
-        <li>Address: ${c.address.block + c.address.street} </li>
+        <li>Block: ${c.address.block + c.address.street} </li>
         <li>LatLong: (${c.address.lat}, ${c.address.long}) </li>
-        <li>Date: ${c.date} </li>
+        <li>Date: ${new Date(c.date).toDateString()} </li>
     </ul>`;//`<h2>test here ${i+1}</h2> <ol>` + crimeInfo + `</ol>`
 }
