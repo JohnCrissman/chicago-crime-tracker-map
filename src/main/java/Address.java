@@ -22,7 +22,6 @@ public class Address {
 
 
     private String parseBlock(String fullAddress){
-        System.out.print(fullAddress + "\t");
         // Splits fullAddress on actual block
         String newBlock = fullAddress.split(" ")[0];
         if(newBlock.charAt(0) == '0') {
