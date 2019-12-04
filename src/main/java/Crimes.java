@@ -15,27 +15,12 @@ public class Crimes {
     private List<CrimeRelativeToAddress> crimesRelativeTo;
     private double radius;  // in miles
     private Address relativeAddress;
-    private final String CITY_DATA_URL = "https://data.cityofchicago.org/resource/ijzp-q8t2.json";
 
     public Crimes() throws ParseException, IOException {
         int numOfWeeks = 4;
-
-        query(CITY_DATA_URL, numOfWeeks);
+        this.query(numOfWeeks);
         this.relativeAddress = new Address();
         this.radius = 0.0;
-    }
-
-    public Address getRelativeAddress(){
-        return this.relativeAddress;
-    }
-
-    public double getRadius(){return this.radius;}
-
-    public List<Crime> getAllCrimes(){
-        return this.crimes;
-    }
-    public List<CrimeRelativeToAddress> getCrimesRelativeTo(){
-        return this.crimesRelativeTo;
     }
 
     public void setCrimesWithinRadius(double radius, String address) throws IOException, NotARadiusException, NotAnAddressException {
@@ -46,14 +31,16 @@ public class Crimes {
         *  NotAnAddressException if there are no results found from the google API
         *  NotARadiusException if there is a radius that has value 0 or less
         * */
-        if (radius <= 0) throw new NotARadiusException("Not a radius: "+ radius);
+        if (radius <= 0) {
+            throw new NotARadiusException("Not a radius: "+ radius);
+        }
         this.relativeAddress = AddressHelper.getAddressFromGoogleAPI(address);
         this.radius = radius;
-        keepCrimesWithinRadius();
+        this.findCrimesWithinRadius();
     }
 
-    private void keepCrimesWithinRadius(){
-        // method that uses the loaded crimes to filter them within the radius of selected address
+    private void findCrimesWithinRadius(){
+        // method filters the full list of crimes for those within the radius of selected address
         this.crimesRelativeTo = this.crimes.stream()
                 .map(CrimeRelativeToAddress::new)
                 .peek(cRel -> cRel.setProximity(this.relativeAddress))
@@ -61,22 +48,24 @@ public class Crimes {
                 .collect(toList());
     }
 
-    private String getFullURL(String url, int numOfPastWeeks){
-        LocalDateTime today = LocalDateTime.now();
-        LocalDateTime previous = today.minus(numOfPastWeeks, ChronoUnit.WEEKS);
-        String today2 = today.toString().split("\\.")[0];
-        String previous2 = previous.toString().split("\\.")[0];
-
-        String url_dateRange = "date between '" + previous2+ "' and '" + today2 + "'";
-        return url + "?$limit=10000&$where=" + URLEncoder.encode(url_dateRange, StandardCharsets.UTF_8);
-    }
-
-
-    private void query(String url, int numOfPastWeeks) throws IOException, ParseException{
-        String fullUrl = getFullURL(url, numOfPastWeeks);
+    private void query(int numOfPastWeeks) throws IOException, ParseException{
+        String fullUrl = getFullURL("https://data.cityofchicago.org/resource/ijzp-q8t2.json", numOfPastWeeks);
         System.out.println("Query: " + fullUrl);
         JSONArray jsonArr = APITalker.getArrayResponse(fullUrl, false);
-        this.crimes = createCrimeList(jsonArr);
+        this.crimes = Crimes.createCrimeList(jsonArr);
+    }
+
+    private String getFullURL(String url, int numOfPastWeeks){
+        LocalDateTime endOfTimeFrame = LocalDateTime.now();
+        LocalDateTime beginningOfTimeFrame = endOfTimeFrame.minus(numOfPastWeeks, ChronoUnit.WEEKS);
+        String endDate = endOfTimeFrame.toString().split("\\.")[0];
+        String startDate = beginningOfTimeFrame.toString().split("\\.")[0];
+
+        String url_dateRange = "date between '" + startDate + "' and '" + endDate + "'";
+
+        // TODO: Figure out why intelliJ is made at URLEncoder.encode?
+        String fullUrl = url + "?$limit=10000&$where=" + URLEncoder.encode(url_dateRange, StandardCharsets.UTF_8);
+        return fullUrl;
     }
 
     private static List<Crime> createCrimeList(JSONArray jsonArr) {
@@ -84,7 +73,7 @@ public class Crimes {
 
         for(Object o : jsonArr) {
             JSONObject jsonItem = (JSONObject) o;
-            Crime newCrime = createCrime(jsonItem);
+            Crime newCrime = Crimes.createCrime(jsonItem);
             if (newCrime != null) {
                 listOfCrimes.add(newCrime);
             }
@@ -99,19 +88,28 @@ public class Crimes {
         String latitude = (String) j.get("latitude");
         String longitude = (String) j.get("longitude");
         String block = (String) j.get("block");
+
+        Crime newCrime = null;
         try {
-            return new Crime(type, typeDescription, latitude, longitude, sDate, block);
-        }
-        catch(java.text.ParseException e){
+            newCrime = new Crime(type, typeDescription, latitude, longitude, sDate, block);
+        } catch(java.text.ParseException e){
             System.out.println("Not a number, dropped crime.");
         } catch(NullPointerException e) {
-            //TODO: If lat/long are the only nulls, we could probably use APITalker with block?
             System.out.print("Dropped: ");
             System.out.println("Date: " + sDate + ", type: " + type + ", descr: " + typeDescription
                     + ", Lat: " + latitude + ", Long: " + longitude + ", Block:" + block);
         }
 
-        return null;
+        return newCrime;
     }
 
+    public Address getRelativeAddress(){
+        return this.relativeAddress;
+    }
+    public List<Crime> getAllCrimes(){
+        return this.crimes;
+    }
+    public List<CrimeRelativeToAddress> getCrimesRelativeTo(){
+        return this.crimesRelativeTo;
+    }
 }
