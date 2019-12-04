@@ -1,6 +1,7 @@
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
+import org.w3c.dom.ls.LSOutput;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -14,7 +15,7 @@ import static java.util.stream.Collectors.toList;
 public class Crimes {
     private List<Crime> crimes; //list of loaded crimes for the past X weeks
     private List<CrimeRelativeToAddress> crimesRelativeTo;
-    private double radius;  // in lat/long units
+    private double radius;  // in miles
     private Address relativeAddress;
     private final String CITY_DATA_URL = "https://data.cityofchicago.org/resource/ijzp-q8t2.json";
 
@@ -58,7 +59,10 @@ public class Crimes {
         this.crimesRelativeTo = this.crimes.stream()
                 .map(CrimeRelativeToAddress::new)
                 .peek(cRel -> cRel.setProximity(this.relativeAddress))
+                .peek(cRel -> System.out.print(cRel.getProximity() + "\t"))
                 .filter(cRel -> AddressHelper.isWithinRadius(cRel.getAddress(), this.relativeAddress, this.radius))
+                //TODO: isWithinRadius is only return false!
+                .peek(cRel -> System.out.print(cRel.getProximity() + "\t"))
                 .collect(toList());
     }
 

@@ -2,21 +2,27 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class AddressHelper {
 
 
         public static double distanceBetweenTwoLocations(Address add1, Address add2){
-            return Math.sqrt(Math.pow(add1.getLongInMiles() - add2.getLongInMiles(), 2) + Math.pow(add1.getLatInMiles() - add2.getLatInMiles(), 2));
+            double xDelta = add1.getLongInMiles() - add2.getLongInMiles();
+            double yDelta = add1.getLatInMiles() - add2.getLatInMiles();
+            return Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
         }
 
         public static boolean isWithinRadius(Address add1, Address add2, Double radius){
-            return distanceBetweenTwoLocations(add1, add2) < radius;
+            double distance = distanceBetweenTwoLocations(add1, add2);
+            boolean result = distance < radius;
+            System.out.println(result);
+            return result;
         }
 
         public static Address getAddressFromGoogleAPI(String address) throws  NotAnAddressException, IOException{
             String googleApiKey = "AIzaSyCN7hTS17iGOG-yLy7lBknC5TcCUCHq7Qo";
-            String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + URLEncoder.encode(address,"UTF-8") + "&key=" + googleApiKey;
+            String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + URLEncoder.encode(address, StandardCharsets.UTF_8) + "&key=" + googleApiKey;
 
 
 //            System.out.println("URL:" + url);
