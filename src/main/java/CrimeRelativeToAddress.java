@@ -5,6 +5,7 @@ public class CrimeRelativeToAddress extends Crime {
 
     public CrimeRelativeToAddress(Crime crime) {
         super(crime.getType(), crime.getTypeDescription(), crime.getDate(), crime.getAddress());
+        this.proximity = Double.MAX_VALUE;
     }
 
     public void setProximity(Address address) {
