@@ -13,11 +13,11 @@ public class Address {
         this.block = "5500";
     }
 
-    Address(double latitude, double longitude, String block){
+    Address(double latitude, double longitude, String blockAddress){
         this.latitude = latitude;
         this.longitude = longitude;
-        this.block = parseBlock(block);
-        this.street = parseStreet(block);
+        this.block = parseBlock(blockAddress);
+        this.street = parseStreet(blockAddress);
     }
 
 
@@ -58,7 +58,8 @@ public class Address {
         return this.longitude* LONG_IN_MILES;
     }
 
-    String getFullAddress() {
+    public String getFullAddress() {
+        // TODO: Clean block in parseBlock() instead?
         String cleanBlock = this.block;
         //remove leading 0's
         try {
