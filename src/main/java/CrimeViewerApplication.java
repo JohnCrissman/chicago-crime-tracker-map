@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -117,8 +118,12 @@ public class CrimeViewerApplication extends Application {
 
                 //update list
                 this.listView = setUpFilteredTableView();
-                //TODO: not showing Description???
-                this.basePane.setCenter(this.listView);
+                Node currentView = this.basePane.getCenter();
+                if(currentView.equals(this.mapView)) {
+                    this.basePane.setCenter(this.mapView);
+                } else {
+                    this.basePane.setCenter(this.listView);
+                }
             } catch (IOException ex) {
                 ex.printStackTrace();
             } catch (NotARadiusException ex) {
