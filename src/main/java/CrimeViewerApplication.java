@@ -90,14 +90,13 @@ public class CrimeViewerApplication extends Application {
             String searchQuery = addr.getCharacters().toString();
             String radiusSelection = radius.valueProperty().get();
             double radiusValue = Double.parseDouble(radiusSelection.split(" ")[0]);
-            System.out.println("Address search: " + searchQuery + ", \tRadius: " + radiusValue + " mi");
 
             try {
                 //update crimesRelativeTo in latestCrimes
                 this.latestCrimes.setCrimesWithinRadius(radiusValue, searchQuery);
 
                 // update map
-                //m_Dummy.execJsFunc(this.mapView, this.latestCrimes, "rel");
+                m_Dummy.execJsFunc(this.mapView, this.latestCrimes, "rel");
 
                 //update list
                 this.listView = setUpFilteredTableView();

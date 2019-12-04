@@ -16,7 +16,6 @@ public class AddressHelper {
         public static boolean isWithinRadius(Address add1, Address add2, Double radius){
             double distance = distanceBetweenTwoLocations(add1, add2);
             boolean result = distance < radius;
-            System.out.println(result);
             return result;
         }
 
@@ -24,8 +23,6 @@ public class AddressHelper {
             String googleApiKey = "AIzaSyCN7hTS17iGOG-yLy7lBknC5TcCUCHq7Qo";
             String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + URLEncoder.encode(address, StandardCharsets.UTF_8) + "&key=" + googleApiKey;
 
-
-//            System.out.println("URL:" + url);
             JSONObject jobj = APITalker.getObjectResponse(url, false);
 
             try{
@@ -34,7 +31,6 @@ public class AddressHelper {
                 String block = (String) job.get("formatted_address");
                 job = (JSONObject) job.get("geometry");
                 job = (JSONObject) job.get("location");
-    //            System.out.println(job.get("lng") + "\ttype: " + job.get("lng").getClass());
                 double longitud = (double) job.get("lng");
                 double latitud = (double) job.get("lat");
                 return new Address(latitud,longitud,block);
