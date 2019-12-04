@@ -3,13 +3,13 @@ public class Address {
     private static final double LONG_IN_MILES = 53.0;
     private double latitude;
     private double longitude;
-    private String street; // from block ie: N Paulina etc
+    private String restOfAddress; // from block ie: N Paulina etc
     private String block; // from block, ie: 0078XX
 
     Address() {
         this.latitude = 41.9803467;
         this.longitude = -87.7191019;
-        this.street = "N St Louis Ave, Chicago, IL 60625";
+        this.restOfAddress = "N St Louis Ave, Chicago, IL 60625";
         this.block = "5500";
     }
 
@@ -17,7 +17,7 @@ public class Address {
         this.latitude = latitude;
         this.longitude = longitude;
         this.block = parseBlock(blockAddress);
-        this.street = parseStreet(blockAddress);
+        this.restOfAddress = parseStreet(blockAddress);
     }
 
 
@@ -42,8 +42,8 @@ public class Address {
     }
 
 
-    String getStreet() {
-        return this.street;
+    String getRestOfAddress() {
+        return this.restOfAddress;
     }
 
     String getBlock() {
@@ -68,12 +68,12 @@ public class Address {
         }
         //change 41XX to 4100
         cleanBlock = cleanBlock.replaceFirst("[X]+", "00");
-        return (cleanBlock + " " + this.street).toUpperCase();
+        return (cleanBlock + " " + this.restOfAddress).toUpperCase();
     }
 
     @Override
     public String toString(){
-        return "{ \"block\" : \"" + this.block + "\", \"street\" : \"" + this.street + "\", \"lat\" : \"" + this.latitude+"\", \"long\" : \""+this.longitude+ "\"}";
+        return "{ \"block\" : \"" + this.block + "\", \"street\" : \"" + this.restOfAddress + "\", \"lat\" : \"" + this.latitude+"\", \"long\" : \""+this.longitude+ "\"}";
     }
 
 }

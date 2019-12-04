@@ -91,7 +91,7 @@ public class Crimes {
         }
         this.relativeAddress = AddressHelper.getAddressFromGoogleAPI(address);
         this.radius = radius;
-        
+
         // filters the full list of crimes for those within the radius of selected address
         this.crimesRelativeTo = this.crimes.stream()
                 .map(CrimeRelativeToAddress::new)

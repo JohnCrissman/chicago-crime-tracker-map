@@ -29,6 +29,7 @@ public class CrimeViewerApplication extends Application {
     private WebView mapView;
     private ScrollPane listView;
     private BorderPane basePane;
+    private String addressSearchResult;
 
     @Override
     public void init() {
@@ -104,9 +105,12 @@ public class CrimeViewerApplication extends Application {
             try {
                 //update crimesRelativeTo in latestCrimes
                 this.latestCrimes.setCrimesWithinRadius(radiusValue, searchQuery);
+                this.addressSearchResult = this.latestCrimes.getRelativeAddress().toString();
+                //TODO: show addressSearchResult in search bar
+                System.out.println(this.addressSearchResult);
 
                 // update map
-//                m_Dummy.execJsFunc(this.mapView, this.latestCrimes, "rel");
+                m_Dummy.execJsFunc(this.mapView, this.latestCrimes, "rel");
 
                 //update list
                 this.listView = setUpFilteredTableView();
@@ -122,6 +126,7 @@ public class CrimeViewerApplication extends Application {
                 ex.printStackTrace();
                 System.out.println("not an address");
             }
+
         });
         return searchButton;
     }
