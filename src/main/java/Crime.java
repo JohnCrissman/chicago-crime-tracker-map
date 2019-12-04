@@ -19,8 +19,9 @@ public class Crime {
     }
 
     // constructor given an address object
-    public Crime(String type, Date date, Address address) {
+    public Crime(String type, String typeDescription, Date date, Address address) {
         this.type = type;
+        this.typeDescription = typeDescription;
         this.date = date;
         this.address = address;
     }
