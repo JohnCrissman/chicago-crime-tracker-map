@@ -1,8 +1,6 @@
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
-import org.w3c.dom.ls.LSOutput;
-
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -59,10 +57,7 @@ public class Crimes {
         this.crimesRelativeTo = this.crimes.stream()
                 .map(CrimeRelativeToAddress::new)
                 .peek(cRel -> cRel.setProximity(this.relativeAddress))
-                .peek(cRel -> System.out.print(cRel.getProximity() + "\t"))
                 .filter(cRel -> AddressHelper.isWithinRadius(cRel.getAddress(), this.relativeAddress, this.radius))
-                //TODO: isWithinRadius is only return false!
-                .peek(cRel -> System.out.print(cRel.getProximity() + "\t"))
                 .collect(toList());
     }
 
@@ -73,18 +68,13 @@ public class Crimes {
         String previous2 = previous.toString().split("\\.")[0];
 
         String url_dateRange = "date between '" + previous2+ "' and '" + today2 + "'";
-//        String fullUrl = url + url_dateRange;
-//        System.out.println(fullUrl);
-//        System.out.println(url);
         return url + "?$limit=10000&$where=" + URLEncoder.encode(url_dateRange, StandardCharsets.UTF_8);
-        //return "";
-//        return "https://data.cityofchicago.org/resource/ijzp-q8t2.json?$where=date between '2019-09-01T12:00:00' and '2019-11-01T12:00:00'";
     }
 
 
     private void query(String url, int numOfPastWeeks) throws IOException, ParseException{
         String fullUrl = getFullURL(url, numOfPastWeeks);
-        System.out.println(fullUrl);
+        System.out.println("Query: " + fullUrl);
         JSONArray jsonArr = APITalker.getArrayResponse(fullUrl, false);
         this.crimes = createCrimeList(jsonArr);
     }
@@ -95,19 +85,10 @@ public class Crimes {
         for(Object o : jsonArr) {
             JSONObject jsonItem = (JSONObject) o;
             Crime newCrime = createCrime(jsonItem);
-            //System.out.println(newCrime);
             if (newCrime != null) {
                 listOfCrimes.add(newCrime);
             }
         }
-        /*for(int i = 0; i < jsonArr.size(); i++){
-            JSONObject json1 = (JSONObject) jsonArr.get(i);
-            Crime newCrime = createCrime(json1);
-            //System.out.println(newCrime);
-            if (newCrime != null) {
-            listOfCrimes.add(newCrime);
-            }
-        }*/
         return listOfCrimes;
     }
 
@@ -125,7 +106,7 @@ public class Crimes {
             System.out.println("Not a number, dropped crime.");
         } catch(NullPointerException e) {
             //TODO: If lat/long are the only nulls, we could probably use APITalker with block?
-            System.out.println("Null field, dropped crime: ");
+            System.out.print("Dropped: ");
             System.out.println("Date: " + sDate + ", type: " + type + ", descr: " + typeDescription
                     + ", Lat: " + latitude + ", Long: " + longitude + ", Block:" + block);
         }
@@ -133,7 +114,7 @@ public class Crimes {
         return null;
     }
 
-
+//TODO: Do we need these filterBy methods?
     // Sort by date(newest).
     // Then sort by type, street, and block #.
     public List<CrimeRelativeToAddress> filterByA(){
@@ -202,7 +183,7 @@ public class Crimes {
 
     public List<CrimeRelativeToAddress> filterByD(){
 
-        return new LinkedList<CrimeRelativeToAddress>();
+        return new LinkedList<>();
     }
 
 }
