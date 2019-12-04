@@ -1,13 +1,12 @@
-public class Address{
+public class Address {
     private static final double LAT_IN_MILES = 69.0;
     private static final double LONG_IN_MILES = 53.0;
-
     private double latitude;
     private double longitude;
     private String street; // from block ie: N Paulina etc
     private String block; // from block, ie: 0078XX
 
-    Address(){
+    Address() {
         this.latitude = 41.9803467;
         this.longitude = -87.7191019;
         this.street = "N St Louis Ave, Chicago, IL 60625";

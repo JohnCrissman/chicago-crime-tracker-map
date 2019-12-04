@@ -28,7 +28,6 @@ public class CrimeViewerApplication extends Application {
     private Crimes latestCrimes;
     private WebView mapView;
     private ScrollPane listView;
-    private TableView<Crime> table;
     private BorderPane basePane;
 
     @Override
@@ -47,15 +46,13 @@ public class CrimeViewerApplication extends Application {
 
         HBox topMenu = createTopMenu();
         this.basePane.setTop(topMenu);
+        BorderPane bottomMenu = createBottomMenu(this.basePane);
+        this.basePane.setBottom(bottomMenu);
 
         this.listView = setUpTableView();
         this.mapView = setUpMapView();
         this.basePane.setCenter(this.mapView);
 
-        BorderPane bottomMenu = createBottomMenu(this.basePane);
-        this.basePane.setBottom(bottomMenu);
-
-        //make visible
         Scene scene = new Scene(basePane, 1000, 700, Color.web("#666970"));
         stage.setScene(scene);
         stage.setTitle("Crimes in Chicago");
@@ -63,10 +60,13 @@ public class CrimeViewerApplication extends Application {
     }
 
     private HBox createTopMenu() {
+        // pane setup
         HBox topMenu = new HBox();
         setPaneStyle(topMenu, "#b6b6af");
         topMenu.setSpacing(10);
         topMenu.setAlignment(Pos.CENTER);
+
+        // fields setup
         TextField addr = setUpAddressSearch();
         ChoiceBox<String> radius = setUpRadiusMenu();
         Button search = setUpSearchButton(addr, radius);
@@ -75,9 +75,19 @@ public class CrimeViewerApplication extends Application {
         return topMenu;
     }
 
-    private void setPaneStyle(Pane menu, String color) {
-        menu.setPadding(new Insets(15, 12, 15, 12));
-        menu.setStyle("-fx-background-color: " + color+ ";");
+    private TextField setUpAddressSearch() {
+        TextField addr = new TextField("5500 N St Louis Ave");
+        addr.setPrefWidth(400);
+        return addr;
+    }
+
+    private ChoiceBox<String> setUpRadiusMenu() {
+        ChoiceBox<String> radius = new ChoiceBox<>();
+        radius.getItems().addAll
+                ("0.25 mi", "0.5 mi", "0.75 mi", "1 mi", "2 mi", "5 mi");
+        radius.setValue("0.5 mi");
+        radius.setPrefWidth(100);
+        return radius;
     }
 
     private Button setUpSearchButton(TextField addr, ChoiceBox<String> radius) {
@@ -85,21 +95,22 @@ public class CrimeViewerApplication extends Application {
         searchButton.setPrefSize(100, 20);
 
         searchButton.setOnAction(e -> {
-            // get search query terms
+            // acquire search terms
             String searchQuery = addr.getCharacters().toString();
             String radiusSelection = radius.valueProperty().get();
             double radiusValue = Double.parseDouble(radiusSelection.split(" ")[0]);
+            System.out.println(searchQuery + ", radius: " + radiusSelection);
 
             try {
                 //update crimesRelativeTo in latestCrimes
                 this.latestCrimes.setCrimesWithinRadius(radiusValue, searchQuery);
 
                 // update map
-                m_Dummy.execJsFunc(this.mapView, this.latestCrimes, "rel");
+//                m_Dummy.execJsFunc(this.mapView, this.latestCrimes, "rel");
 
                 //update list
                 this.listView = setUpFilteredTableView();
-                //TODO: this current starts with listView, but maybe change?
+                //TODO: not showing Description???
                 this.basePane.setCenter(this.listView);
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -107,60 +118,78 @@ public class CrimeViewerApplication extends Application {
                 ex.printStackTrace();
                 System.out.println("not a valid radius");
             } catch (NotAnAddressException ex) {
-//                TODO: send a message to the user saying "No results. Enter a different address"
+                //TODO: send a message to the user saying "No results. Enter a different address"
                 ex.printStackTrace();
                 System.out.println("not an address");
             }
-
         });
         return searchButton;
-    }
-
-    private ChoiceBox<String> setUpRadiusMenu() {
-        ChoiceBox<String> radius = new ChoiceBox<>();
-        radius.getItems().addAll
-                ("0.1 mi", "0.25 mi", "0.5 mi", "0.75 mi", "1 mi", "2 mi", "5 mi");
-        radius.setValue("0.1 mi");
-        radius.setPrefWidth(100);
-        return radius;
-    }
-
-    private TextField setUpAddressSearch() {
-        TextField addr = new TextField("5500 N St Louis Ave");
-        addr.setPrefWidth(400);
-        return addr;
     }
 
     private WebView setUpMapView() {
         WebView webView = new WebView();
         WebEngine webEngine = webView.getEngine();
+
         URL mapPage = this.getClass().getResource("map.html");
         webEngine.load(mapPage.toString());
 
         return webView;
     }
 
-    private ScrollPane setUpFilteredTableView() {
-        VBox vb = new VBox();
-        vb.getChildren().add(new Pane(new Label("Shift+click to sort by multiple columns.")));
+    private ScrollPane setUpTableView() {
+        TableView<Crime> table = new TableView<>();
+        setUpNewTableView(table);
 
-        TableView<CrimeRelativeToAddress> table = new TableView<>();
-        setUpNewFilteredTableView(table);
-
-        System.out.println(this.latestCrimes.getCrimesRelativeTo().size());
-
-        //add data
-        ObservableList<CrimeRelativeToAddress> data =
-                FXCollections.observableList(this.latestCrimes.getCrimesRelativeTo());
+        ObservableList<Crime> data = FXCollections.observableList(this.latestCrimes.getAllCrimes());
         table.setItems(data);
-        vb.getChildren().add(table);
-        // TODO: Make this child of vb extend to the bottom of the scrollable pane.
 
-        //set up scrollable
+        // make a scroll bar
         ScrollPane s = new ScrollPane();
         s.setFitToHeight(true);
         s.setFitToWidth(true);
-        s.setContent(vb);
+        s.setContent(table);
+
+        return s;
+    }
+
+    private void setUpNewTableView(TableView<Crime> table) {
+        table.setEditable(false);
+
+        //set up columns
+        TableColumn<Crime, Date> date = new TableColumn<>("Date");
+        date.setMinWidth(100);
+        date.setCellValueFactory(new PropertyValueFactory<>("date"));
+
+        TableColumn<Crime, String> type = new TableColumn<>("Type");
+        type.setMinWidth(150);
+        type.setCellValueFactory(new PropertyValueFactory<>("type"));
+
+        TableColumn<Crime, String> description = new TableColumn<>("Description");
+        description.setMinWidth(300);
+        description.setCellValueFactory(new PropertyValueFactory<>("typeDescription"));
+
+        TableColumn<Crime, String> address = new TableColumn<>("Address");
+        address.setMinWidth(300);
+        address.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getAddress().getFullAddress()));
+
+        table.getColumns().addAll(date, type, description, address);
+    }
+
+    private ScrollPane setUpFilteredTableView() {
+        TableView<CrimeRelativeToAddress> table = new TableView<>();
+        setUpNewFilteredTableView(table);
+
+        System.out.println("Crimes found in radius: " + this.latestCrimes.getCrimesRelativeTo().size());
+
+        ObservableList<CrimeRelativeToAddress> data =
+                FXCollections.observableList(this.latestCrimes.getCrimesRelativeTo());
+        table.setItems(data);
+
+        // make a scroll bar
+        ScrollPane s = new ScrollPane();
+        s.setFitToHeight(true);
+        s.setFitToWidth(true);
+        s.setContent(table);
 
         return s;
     }
@@ -188,51 +217,6 @@ public class CrimeViewerApplication extends Application {
         table.getColumns().addAll(date, type, description, address);
     }
 
-    private ScrollPane setUpTableView() {
-        VBox vb = new VBox();
-        vb.getChildren().add(new Pane(new Label("Shift+click to sort by multiple columns.")));
-
-        this.table = new TableView<>();
-        setUpNewTableView();
-
-        //add data
-        ObservableList<Crime> data = FXCollections.observableList(this.latestCrimes.getAllCrimes());
-        this.table.setItems(data);
-        vb.getChildren().add(this.table);
-        // TODO: Make this child of vb extend to the bottom of the scrollable pane.
-
-        //set up scrollable
-        ScrollPane s = new ScrollPane();
-        s.setFitToHeight(true);
-        s.setFitToWidth(true);
-        s.setContent(vb);
-
-        return s;
-    }
-
-    private void setUpNewTableView() {
-        this.table.setEditable(false);
-
-        //set up columns
-        TableColumn<Crime, Date> date = new TableColumn<>("Date");
-        date.setMinWidth(100);
-        date.setCellValueFactory(new PropertyValueFactory<>("date"));
-
-        TableColumn<Crime, String> type = new TableColumn<>("Type");
-        type.setMinWidth(150);
-        type.setCellValueFactory(new PropertyValueFactory<>("type"));
-
-        TableColumn<Crime, String> description = new TableColumn<>("Description");
-        description.setMinWidth(300);
-        description.setCellValueFactory(new PropertyValueFactory<>("typeDescription"));
-
-        TableColumn<Crime, String> address = new TableColumn<>("Address");
-        address.setMinWidth(300);
-        address.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getAddress().getFullAddress()));
-
-        this.table.getColumns().addAll(date, type, description, address);
-    }
-
     private BorderPane createBottomMenu(BorderPane basePane) {
         //create bottom pane and set up style
         BorderPane fullBottomMenu = new BorderPane();
@@ -255,9 +239,6 @@ public class CrimeViewerApplication extends Application {
         //create View List button
         listViewButton.setPrefSize(100, 20);
         listViewButton.setOnAction(e -> {
-            //TODO: show the search on the list
-//             this.latestCrimes.getCrimesRelativeTo()
-//            updateCrimesRelativeToListView(???????????????)
             basePane.setCenter(this.listView);
             listViewButton.setDisable(true);
             mapViewButton.setDisable(false);
@@ -270,7 +251,7 @@ public class CrimeViewerApplication extends Application {
                 m_Dummy.createDummyBtn(mapView, latestCrimes) //TODO: <---- MARI should ERASE this method call
         );
 
-        //create Exit button
+        //create exit button
         Button exitProgramButton = new Button("Exit");
         exitProgramButton.setPrefSize(100,20);
         exitProgramButton.setOnAction(e -> {
@@ -284,6 +265,11 @@ public class CrimeViewerApplication extends Application {
         fullBottomMenu.setRight(exitProgramButton);
 
         return fullBottomMenu;
+    }
+
+    private void setPaneStyle(Pane menu, String color) {
+        menu.setPadding(new Insets(15, 12, 15, 12));
+        menu.setStyle("-fx-background-color: " + color+ ";");
     }
 
     @Override

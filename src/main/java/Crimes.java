@@ -19,7 +19,7 @@ public class Crimes {
     public Crimes() throws ParseException, IOException {
         int numOfWeeks = 4;
         this.query(numOfWeeks);
-        this.relativeAddress = new Address();
+        //this.relativeAddress = new Address();
         this.radius = 0.0;
     }
 

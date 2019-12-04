@@ -14,6 +14,9 @@ public class AddressHelper {
         }
 
         public static boolean isWithinRadius(Address add1, Address add2, Double radius){
+            // TODO: Troubleshoot this!
+            //  "2400 N St Louis Ave"/"5 mi" returns 3896 crimes,
+            //  "2900 N St Louis Ave"/"5 mi" returns 0 crimes.
             double distance = distanceBetweenTwoLocations(add1, add2);
             boolean result = distance < radius;
             return result;
