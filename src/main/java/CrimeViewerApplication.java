@@ -1,6 +1,5 @@
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -11,19 +10,13 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.ParseException;
-
 import java.io.IOException;
 import java.net.URL;
-import java.text.DateFormat;
 import java.util.Date;
 
 import static java.util.stream.Collectors.toList;
@@ -109,7 +102,7 @@ public class CrimeViewerApplication extends Application {
             try {
                 //update crimesRelativeTo in latestCrimes
                 this.latestCrimes.setCrimesWithinRadius(radiusValue, searchQuery);
-                this.addressSearchResult = this.latestCrimes.getRelativeAddress().toString();
+                this.addressSearchResult = this.latestCrimes.getRelativeAddress().getFullAddress();
                 //TODO: show addressSearchResult in search bar
                 System.out.println(this.addressSearchResult);
 
@@ -192,7 +185,7 @@ public class CrimeViewerApplication extends Application {
         description.setMinWidth(300);
         description.setCellValueFactory(new PropertyValueFactory<>("typeDescription"));
 
-        TableColumn<Crime, String> address = new TableColumn<>("Address");
+        TableColumn<Crime, String> address = new TableColumn<>("Block");
         address.setMinWidth(300);
         address.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getAddress().getFullAddress()));
 
@@ -234,7 +227,7 @@ public class CrimeViewerApplication extends Application {
         description.setMinWidth(300);
         description.setCellValueFactory(new PropertyValueFactory<>("typeDescription"));
 
-        TableColumn<CrimeRelativeToAddress, String> address = new TableColumn<>("Address");
+        TableColumn<CrimeRelativeToAddress, String> address = new TableColumn<>("Block");
         address.setMinWidth(300);
         address.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getAddress().getFullAddress()));
 

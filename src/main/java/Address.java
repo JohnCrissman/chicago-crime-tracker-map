@@ -22,9 +22,14 @@ public class Address {
 
 
     private String parseBlock(String fullAddress){
+        System.out.print(fullAddress + "\t");
         // Splits fullAddress on actual block
-        String[] newBlock = fullAddress.split(" ");
-        return newBlock[0];
+        String newBlock = fullAddress.split(" ")[0];
+        if(newBlock.charAt(0) == '0') {
+            newBlock = newBlock.replaceFirst("[0]+", "");
+        }
+        newBlock = newBlock.replaceFirst("[X]+", "00");
+        return newBlock;
     }
 
     private String parseStreet(String fullAddress){
@@ -59,16 +64,7 @@ public class Address {
     }
 
     public String getFullAddress() {
-        // TODO: Clean block in parseBlock() instead?
-        String cleanBlock = this.block;
-        //remove leading 0's
-        try {
-            cleanBlock = cleanBlock.split("[0]+", 2)[1];
-        } catch(ArrayIndexOutOfBoundsException ignored) {
-        }
-        //change 41XX to 4100
-        cleanBlock = cleanBlock.replaceFirst("[X]+", "00");
-        return (cleanBlock + " " + this.restOfAddress).toUpperCase();
+        return (this.block + " " + this.restOfAddress).toUpperCase();
     }
 
     @Override
