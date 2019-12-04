@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -18,14 +19,14 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
-
 import static java.util.stream.Collectors.toList;
 
 public class CrimeViewerApplication extends Application {
     private Crimes latestCrimes;
+    private BorderPane basePane;
     private WebView mapView;
     private ScrollPane listView;
-    private BorderPane basePane;
+    private ScrollPane summaryView;
     private String addressSearchResult;
 
     @Override
@@ -49,6 +50,7 @@ public class CrimeViewerApplication extends Application {
 
         this.listView = setUpTableView();
         this.mapView = setUpMapView();
+        this.summaryView = setUpSummaryView();
         this.basePane.setCenter(this.mapView);
 
         Scene scene = new Scene(basePane, 1000, 700, Color.web("#666970"));
@@ -234,6 +236,15 @@ public class CrimeViewerApplication extends Application {
         table.getColumns().addAll(date, type, description, address);
     }
 
+    private ScrollPane setUpSummaryView() {
+        ScrollPane s = new ScrollPane();
+        VBox vb = new VBox();
+        Text placeholder = new Text("Placeholder");
+        vb.getChildren().add(placeholder);
+        s.setContent(vb);
+        return s;
+    }
+
     private BorderPane createBottomMenu(BorderPane basePane) {
         //create bottom pane and set up style
         BorderPane fullBottomMenu = new BorderPane();
@@ -243,6 +254,7 @@ public class CrimeViewerApplication extends Application {
 
         Button mapViewButton = new Button("View Map");
         Button listViewButton = new Button("View List");
+        Button summaryViewButton = new Button("View Summary");
 
         //create View Map button
         mapViewButton.setPrefSize(100, 20);
@@ -250,6 +262,7 @@ public class CrimeViewerApplication extends Application {
             basePane.setCenter(this.mapView);
             mapViewButton.setDisable(true);
             listViewButton.setDisable(false);
+            summaryViewButton.setDisable(false);
         });
         mapViewButton.setDisable(true);
 
@@ -259,12 +272,23 @@ public class CrimeViewerApplication extends Application {
             basePane.setCenter(this.listView);
             listViewButton.setDisable(true);
             mapViewButton.setDisable(false);
+            summaryViewButton.setDisable(false);
+        });
+
+        //create View Summary button
+        summaryViewButton.setPrefSize(100, 20);
+        summaryViewButton.setOnAction(e -> {
+            basePane.setCenter(this.summaryView);
+            listViewButton.setDisable(false);
+            mapViewButton.setDisable(false);
+            summaryViewButton.setDisable(true);
         });
 
         //add buttons to pane
         changeViewPalette.getChildren().addAll(
                 mapViewButton,
-                listViewButton
+                listViewButton,
+                summaryViewButton
         );
 
         //create exit button
