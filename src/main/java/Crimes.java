@@ -23,31 +23,6 @@ public class Crimes {
         this.radius = 0.0;
     }
 
-    public void setCrimesWithinRadius(double radius, String address) throws IOException, NotARadiusException, NotAnAddressException {
-        /*
-        *  sets the instance variable crimesRelativeToAddress to the filtered specified by the user
-        *  throws:
-        *  IOException: if there is an issue with the server (API)
-        *  NotAnAddressException if there are no results found from the google API
-        *  NotARadiusException if there is a radius that has value 0 or less
-        * */
-        if (radius <= 0) {
-            throw new NotARadiusException("Not a radius: "+ radius);
-        }
-        this.relativeAddress = AddressHelper.getAddressFromGoogleAPI(address);
-        this.radius = radius;
-        this.findCrimesWithinRadius();
-    }
-
-    private void findCrimesWithinRadius(){
-        // method filters the full list of crimes for those within the radius of selected address
-        this.crimesRelativeTo = this.crimes.stream()
-                .map(CrimeRelativeToAddress::new)
-                .peek(cRel -> cRel.setProximity(this.relativeAddress))
-                .filter(cRel -> AddressHelper.isWithinRadius(cRel.getAddress(), this.relativeAddress, this.radius))
-                .collect(toList());
-    }
-
     private void query(int numOfPastWeeks) throws IOException, ParseException{
         String fullUrl = getFullURL("https://data.cityofchicago.org/resource/ijzp-q8t2.json", numOfPastWeeks);
         System.out.println("Query: " + fullUrl);
@@ -102,6 +77,29 @@ public class Crimes {
 
         return newCrime;
     }
+
+    public void setCrimesWithinRadius(double radius, String address) throws IOException, NotARadiusException, NotAnAddressException {
+        /*
+        *  sets the instance variable crimesRelativeToAddress to the filtered specified by the user
+        *  throws:
+        *  IOException: if there is an issue with the server (API)
+        *  NotAnAddressException if there are no results found from the google API
+        *  NotARadiusException if there is a radius that has value 0 or less
+        * */
+        if (radius <= 0) {
+            throw new NotARadiusException("Not a radius: "+ radius);
+        }
+        this.relativeAddress = AddressHelper.getAddressFromGoogleAPI(address);
+        this.radius = radius;
+        
+        // filters the full list of crimes for those within the radius of selected address
+        this.crimesRelativeTo = this.crimes.stream()
+                .map(CrimeRelativeToAddress::new)
+                .peek(cRel -> cRel.setProximity(this.relativeAddress))
+                .filter(cRel -> AddressHelper.isWithinRadius(cRel.getAddress(), this.relativeAddress, this.radius))
+                .collect(toList());
+    }
+
 
     public Address getRelativeAddress(){
         return this.relativeAddress;
