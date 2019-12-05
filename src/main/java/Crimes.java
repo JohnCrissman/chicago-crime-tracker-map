@@ -7,8 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 public class Crimes {
     private List<Crime> crimes; //list of loaded crimes for the past X weeks
@@ -99,6 +98,63 @@ public class Crimes {
                 .filter(cRel -> AddressHelper.isWithinRadius(cRel.getAddress(), this.relativeAddress, this.radius))
                 .collect(toList());
     }
+
+    public int count(){
+        return this.crimesRelativeTo.size();
+    }
+
+    public Map<String, Integer> countByType(){
+        return this.crimesRelativeTo.stream()
+                .collect(groupingBy(Crime::getType)).entrySet().stream()
+                .collect(toMap(Map.Entry::getKey, e -> e.getValue().size()));
+    }
+
+    public Map<DayOfWeekCrime, Integer> countByDayOfWeek(){
+        return this.crimesRelativeTo.stream()
+            .collect(groupingBy(this::getDayOfWeek)).entrySet().stream()
+            .collect(toMap(Map.Entry::getKey, e -> e.getValue().size()));
+    }
+
+    public Map<Integer, Integer> countByDayOfMonth(){
+        return this.crimesRelativeTo.stream()
+            .collect(groupingBy(this::getDayOfMonth)).entrySet().stream()
+            .collect(toMap(Map.Entry::getKey, e -> e.getValue().size()));
+    }
+
+    private DayOfWeekCrime getDayOfWeek(CrimeRelativeToAddress c){
+        Calendar cal = new Calendar.Builder().setInstant(c.getDate()).build();
+        return DayOfWeekCrime.of(cal.get(Calendar.DAY_OF_WEEK));
+    }
+
+    private int getDayOfMonth(CrimeRelativeToAddress c){
+        Calendar cal = new Calendar.Builder().setInstant(c.getDate()).build();
+        return cal.get(Calendar.DAY_OF_MONTH);
+    }
+
+
+    // TODO: Example of how to use these methods
+    /*  try {
+            Crimes crimes = new Crimes();
+            crimes.setCrimesWithinRadius(1, "5500 N Saint Louis, Chicago");
+            System.out.println();
+            System.out.println("******************************** COUNT BY TYPE (OF CRIME)");
+            System.out.println(crimes.countByType());
+            System.out.println("******************************** COUNT BY DAY OF WEEK (MON - FRI)");
+            System.out.println(crimes.countByDayOfWeek());
+            System.out.println("******************************** COUNT");
+            System.out.println(crimes.count());
+            System.out.println("******************************** COUNT BY DAY OF MONTH (1-31)");
+            System.out.println(crimes.countByDayOfMonth());
+        }catch(NotAnAddressException e){
+            e.printStackTrace();
+        }catch(NotARadiusException e){
+            e.printStackTrace();
+        }catch(ParseException e){
+            e.printStackTrace();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        */
 
 
     public Address getRelativeAddress(){
