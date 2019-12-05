@@ -20,7 +20,7 @@ public class Crimes {
         this.query(numOfWeeks);
         //this.relativeAddress = new Address();
         this.radius = 0.0;
-        this.crimesRelativeTo = new ArrayList<>();
+        //this.crimesRelativeTo = new ArrayList<>();
     }
 
     private void query(int numOfPastWeeks) throws IOException, ParseException{
@@ -38,7 +38,7 @@ public class Crimes {
 
         String url_dateRange = "date between '" + startDate + "' and '" + endDate + "'";
 
-        // TODO: Figure out why intelliJ is made at URLEncoder.encode?
+        // TODO: Figure out why intelliJ is mad at URLEncoder.encode?
         String fullUrl = url + "?$limit=100000&$where=" + URLEncoder.encode(url_dateRange, StandardCharsets.UTF_8);
         return fullUrl;
     }

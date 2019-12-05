@@ -123,8 +123,13 @@ public class CrimeViewerApplication extends Application {
                 // update map
                 execJsFunc();
 
+
                 //update list
                 this.listView = setUpFilteredTableView();
+
+                Group root = exampleOfAChart();
+                this.summaryView.setContent(root);
+
                 Node currentView = this.basePane.getCenter();
                 if(currentView.equals(this.mapView)) {
                     this.basePane.setCenter(this.mapView);
@@ -252,10 +257,9 @@ public class CrimeViewerApplication extends Application {
     private ScrollPane setUpSummaryView() {
         ScrollPane s = new ScrollPane();
         VBox vb = new VBox();
-        Group root = exampleOfAChart();
-        vb.getChildren().add(root);
-//        Text placeholder = new Text("Placeholder");
-//        vb.getChildren().add(placeholder);
+
+        Text placeholder = new Text("Placeholder");
+        vb.getChildren().add(placeholder);
         s.setContent(vb);
         return s;
     }
@@ -263,8 +267,8 @@ public class CrimeViewerApplication extends Application {
     private Group exampleOfAChart() {
 //        TODO: FILL IN THE CORRECT INFORMATION AND VOILA!
 //         check the observableMap and figure out how to add the data
-            ObservableMap<DayOfWeekCrime, Integer> data =
-                    FXCollections.observableMap(this.latestCrimes.countByDayOfWeek());
+//            ObservableMap<DayOfWeekCrime, Integer> data =
+//                    FXCollections.observableMap(this.latestCrimes.countByDayOfWeek());
 
         //Defining the x axis
         CategoryAxis xAxis = new CategoryAxis();
@@ -285,19 +289,19 @@ public class CrimeViewerApplication extends Application {
         series1.setName("Count by Day of Week");
 
 //      TODO: adds data into the chart
-        data.entrySet().stream()
+        this.latestCrimes.countByDayOfWeek().entrySet().stream()
                 .peek(System.out::println)
                 .peek(e -> System.out.println("Sup"))
                 .forEach(e -> series1.getData().add(new XYChart.Data<>(e.getKey().toString(),e.getValue())));
-        /*Arrays.asList( new XYChart.Data<>("Monday", 1.0),
+       /* Arrays.asList( new XYChart.Data<>("Monday", 1.0),
                 new XYChart.Data<>("Wednesday", 3.0),
                 new XYChart.Data<>("Sunday", 4.0),
                 new XYChart.Data<>("Tuesday", 6.0))
                 .stream().forEach( v -> series1.getData().add(v));*/
-        series1.getData().add(new XYChart.Data<>("Monday", 1.0));
-        series1.getData().add(new XYChart.Data<>("Friday", 3.0));
-        series1.getData().add(new XYChart.Data<>("Sunday", 4.0));
-        series1.getData().add(new XYChart.Data<>("Tuesday", 5.0));
+//        series1.getData().add(new XYChart.Data<>("Monday", 1.0));
+//        series1.getData().add(new XYChart.Data<>("Friday", 3.0));
+//        series1.getData().add(new XYChart.Data<>("Sunday", 4.0));
+//        series1.getData().add(new XYChart.Data<>("Tuesday", 5.0));
 
         /*XYChart.Series<String, Number> series2 = new XYChart.Series<>();
         series2.setName("Audi");
