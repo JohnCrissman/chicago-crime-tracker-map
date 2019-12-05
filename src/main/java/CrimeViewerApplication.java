@@ -4,8 +4,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
@@ -18,7 +23,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Map;
+
 import static java.util.stream.Collectors.toList;
 
 public class CrimeViewerApplication extends Application {
@@ -239,10 +247,60 @@ public class CrimeViewerApplication extends Application {
     private ScrollPane setUpSummaryView() {
         ScrollPane s = new ScrollPane();
         VBox vb = new VBox();
-        Text placeholder = new Text("Placeholder");
-        vb.getChildren().add(placeholder);
+        Group root = exampleOfAChart();
+
+        vb.getChildren().add(root);
+//        Text placeholder = new Text("Placeholder");
+//        vb.getChildren().add(placeholder);
         s.setContent(vb);
         return s;
+    }
+
+    private Group exampleOfAChart() {
+//        TODO: FILL IN THE CORRECT INFORMATION AND VOILA!
+        //Defining the x axis
+        CategoryAxis xAxis = new CategoryAxis();
+//        this.latestCrimes.countByDayOfWeek().keySet().toArray();
+        xAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(
+                "John", "User rating", "Mari", "Beth")));
+        xAxis.setLabel("x-axis label");
+
+        //Defining the y axis
+        NumberAxis yAxis = new NumberAxis();
+        yAxis.setLabel("y-axis label");
+
+        //Creating the Bar chart
+        BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
+        barChart.setTitle("Comparison between various crimes");
+
+        //Prepare XYChart.Series objects by setting data
+        XYChart.Series<String, Number> series1 = new XYChart.Series<>();
+        series1.setName("Fiat");
+        series1.getData().add(new XYChart.Data<>("John", 1.0));
+        series1.getData().add(new XYChart.Data<>("User rating", 3.0));
+        series1.getData().add(new XYChart.Data<>("Mari", 5.0));
+        series1.getData().add(new XYChart.Data<>("Beth", 5.0));
+
+        XYChart.Series<String, Number> series2 = new XYChart.Series<>();
+        series2.setName("Audi");
+        series2.getData().add(new XYChart.Data<>("John", 10.0));
+        series2.getData().add(new XYChart.Data<>("User rating", 6.0));
+
+        series2.getData().add(new XYChart.Data<>("Mari", 4.0));
+        series2.getData().add(new XYChart.Data<>("Beth", 4.0));
+
+        XYChart.Series<String, Number> series3 = new XYChart.Series<>();
+        series3.setName("Ford");
+        series3.getData().add(new XYChart.Data<>("John", 4.0));
+        series3.getData().add(new XYChart.Data<>("User rating", 2.0));
+        series3.getData().add(new XYChart.Data<>("Mari", 3.0));
+        series3.getData().add(new XYChart.Data<>("Beth", 6.0));
+
+
+        //Setting the data to bar chart
+        barChart.getData().addAll(series1, series2, series3);
+
+        return new Group(barChart);
     }
 
     private BorderPane createBottomMenu(BorderPane basePane) {
