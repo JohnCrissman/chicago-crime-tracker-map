@@ -1,3 +1,8 @@
+import java.util.Arrays;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+
 public enum DayOfWeekCrime implements Comparable<DayOfWeekCrime>{
     SUNDAY(1,"Sunday"),
     MONDAY(2,"Monday"),
@@ -21,6 +26,12 @@ public enum DayOfWeekCrime implements Comparable<DayOfWeekCrime>{
                 return d;
         }
         throw new IllegalArgumentException ("No such a number");
+    }
+
+    public static List<String> stringValues(){
+        return Arrays.stream(DayOfWeekCrime.values())
+                .map(dw -> dw.dayName)
+                .collect(toList());
     }
 
     @Override
