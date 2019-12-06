@@ -16,25 +16,8 @@ public class Address {
     Address(double latitude, double longitude, String blockAddress){
         this.latitude = latitude;
         this.longitude = longitude;
-        this.block = parseBlock(blockAddress);
-        this.restOfAddress = parseStreet(blockAddress);
-    }
-
-
-    private String parseBlock(String fullAddress) {
-        // Splits fullAddress on actual block
-        String newBlock = fullAddress.split(" ")[0];
-        if(newBlock.charAt(0) == '0') {
-            newBlock = newBlock.replaceFirst("[0]+", "");
-        }
-        newBlock = newBlock.replaceFirst("[X]+", "00");
-        return newBlock;
-    }
-
-    private String parseStreet(String fullAddress){
-        // Splits fullAddress on actual street
-        String[] newBlock = fullAddress.split(" ");
-        return fullAddress.substring(newBlock[0].length());
+        this.block = AddressHelper.parseBlock(blockAddress);
+        this.restOfAddress = AddressHelper.parseStreet(blockAddress);
     }
 
     public double getLatitude() {

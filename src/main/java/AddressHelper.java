@@ -39,24 +39,41 @@ public final class AddressHelper {
         return result;
     }
 
-    public static Address getAddressFromGoogleAPI(String address) throws  NotAnAddressException, IOException{
+    public static Address getAddressFromGoogleAPI(String address) throws NotAnAddressException, IOException {
         String googleApiKey = "AIzaSyCN7hTS17iGOG-yLy7lBknC5TcCUCHq7Qo";
         String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + URLEncoder.encode(address, StandardCharsets.UTF_8) + "&key=" + googleApiKey;
 
         JSONObject jobj = APITalker.getObjectResponse(url, false);
 
-        try{
+        try {
             JSONArray jar = (JSONArray) jobj.get("results");
             JSONObject job = (JSONObject) jar.get(0);
             String block = (String) job.get("formatted_address");
             job = (JSONObject) job.get("geometry");
             job = (JSONObject) job.get("location");
-            double longitud = (double) job.get("lng");
-            double latitud = (double) job.get("lat");
-            return new Address(latitud,longitud,block);
+            double longitude = (double) job.get("lng");
+            double latitude = (double) job.get("lat");
+            return new Address(latitude, longitude, block);
         }
-        catch (Exception e){
+        catch (Exception e) {
             throw new NotAnAddressException("Not valid address:" + address);
         }
     }
+
+    public static String parseBlock(String fullAddress) {
+        // Splits fullAddress on actual block
+        String newBlock = fullAddress.split(" ")[0];
+        if(newBlock.charAt(0) == '0') {
+            newBlock = newBlock.replaceFirst("[0]+", "");
+        }
+        newBlock = newBlock.replaceFirst("[X]+", "00");
+        return newBlock;
+    }
+
+    public static String parseStreet(String fullAddress){
+        // Splits fullAddress on actual street
+        String[] newBlock = fullAddress.split(" ");
+        return fullAddress.substring(newBlock[0].length());
+    }
+
 }
