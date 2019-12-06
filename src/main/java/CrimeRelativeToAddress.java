@@ -9,7 +9,7 @@ public class CrimeRelativeToAddress extends Crime {
     }
 
     public void setProximity(Address address) {
-        this.proximity = AddressHelper.distanceBetweenTwoLocations(this.getAddress(), address);
+        this.proximity = AddressHelper.propperDistanceBetweenTwoLocations(this.getAddress(), address);
     }
 
     public double getProximity(){

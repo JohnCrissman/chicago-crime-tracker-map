@@ -58,7 +58,7 @@ public class APITalker {
         return null;
     }
 
-    private static String APIRequestAsString(String raw_url) throws UnknownHostException, MalformedURLException, IOException{
+    private static String APIRequestAsString(String raw_url) throws IOException{
 
         StringBuilder result = new StringBuilder();
         URL url = new URL(raw_url);

@@ -1,10 +1,15 @@
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
-import java.io.IOException;
+
+import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.DateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import static java.util.stream.Collectors.*;
@@ -38,28 +43,48 @@ public class Crimes {
 
         String url_dateRange = "date between '" + startDate + "' and '" + endDate + "'";
 
-        // TODO: Figure out why intelliJ is mad at URLEncoder.encode?
         String fullUrl = url + "?$limit=100000&$where=" + URLEncoder.encode(url_dateRange, StandardCharsets.UTF_8);
         return fullUrl;
     }
 
     private static List<Crime> createCrimeList(JSONArray jsonArr) {
-        // TODO: File write
         List<Crime> listOfCrimes = new ArrayList<>();
-        //open file
 
-        for(Object o : jsonArr) {
-            JSONObject jsonItem = (JSONObject) o;
-            Crime newCrime = Crimes.createCrime(jsonItem); //pass the error log file
-            if (newCrime != null) {
-                listOfCrimes.add(newCrime);
+        LocalDateTime today = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        String formatDateTime = today.format(formatter);
+        System.out.println("1: "+formatDateTime);
+        String filename =  "logFile_"+ formatDateTime +".log";
+        System.out.println("2: "+filename);
+
+        String logFilename = Crimes.class.getResource("map.html").getPath();
+        logFilename = logFilename.replace("map.html", filename);
+        System.out.println("3: " +logFilename);
+
+        try(FileOutputStream fOut = new FileOutputStream(logFilename);
+            DataOutputStream logFile = new DataOutputStream(fOut)){
+
+            for(Object o : jsonArr) {
+                JSONObject jsonItem = (JSONObject) o;
+                Crime newCrime = Crimes.createCrime(jsonItem, logFile);
+                if (newCrime != null) {
+                    listOfCrimes.add(newCrime);
+                }
             }
+
+        }catch(FileNotFoundException e){
+           //TODO: get rid of stack trace
+            e.printStackTrace();
+        }catch (IOException e){
+           //TODO: get rid of stack trace
+            e.printStackTrace();
         }
-        //close file
+
         return listOfCrimes;
     }
 
-    private static Crime createCrime(JSONObject j) { //also accepts error log file
+    private static Crime createCrime(JSONObject j, DataOutputStream log) throws IOException
+    {
         String sDate = (String) j.get("date");
         String type = (String) j.get("primary_type");
         String typeDescription = (String) j.get("description");
@@ -73,10 +98,11 @@ public class Crimes {
         } catch(java.text.ParseException e){
             System.out.println("Not a number, dropped crime.");
         } catch(NullPointerException e) {
-            //replace this with a file.write()
-            System.out.print("Dropped: ");
-            System.out.println("Date: " + sDate + ", type: " + type + ", descr: " + typeDescription
-                    + ", Lat: " + latitude + ", Long: " + longitude + ", Block:" + block);
+
+            String logMessage = "Dropped:\tDate: " + sDate + ", type: " + type + ", descr: " + typeDescription
+                    + ", Lat: " + latitude + ", Long: " + longitude + ", Block:" + block + "\n";
+            log.writeBytes(logMessage);
+//            System.out.println(logMessage);
         }
 
         return newCrime;
@@ -135,32 +161,6 @@ public class Crimes {
         Calendar cal = new Calendar.Builder().setInstant(c.getDate()).build();
         return cal.get(Calendar.DAY_OF_MONTH);
     }
-
-
-    // TODO: Example of how to use these methods
-    /*  try {
-            Crimes crimes = new Crimes();
-            crimes.setCrimesWithinRadius(1, "5500 N Saint Louis, Chicago");
-            System.out.println();
-            System.out.println("******************************** COUNT BY TYPE (OF CRIME)");
-            System.out.println(crimes.countByType());
-            System.out.println("******************************** COUNT BY DAY OF WEEK (MON - FRI)");
-            System.out.println(crimes.countByDayOfWeek());
-            System.out.println("******************************** COUNT");
-            System.out.println(crimes.count());
-            System.out.println("******************************** COUNT BY DAY OF MONTH (1-31)");
-            System.out.println(crimes.countByDayOfMonth());
-        }catch(NotAnAddressException e){
-            e.printStackTrace();
-        }catch(NotARadiusException e){
-            e.printStackTrace();
-        }catch(ParseException e){
-            e.printStackTrace();
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-        */
-
 
     public Address getRelativeAddress(){
         return this.relativeAddress;
