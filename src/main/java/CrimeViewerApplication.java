@@ -119,11 +119,6 @@ public class CrimeViewerApplication extends Application {
 
                 //update summary view
                 this.scv.updateSummaryForNewAddress();
-
-//                Node currentView = this.basePane.getCenter();
-//                if(currentView.equals(this.listView)) {
-//                    this.basePane.setCenter(this.listView);
-//                }
             } catch (IOException ex) {
                 System.out.println("whats up");
                 ex.printStackTrace();
@@ -131,11 +126,8 @@ public class CrimeViewerApplication extends Application {
                 ex.printStackTrace();
                 System.out.println("not a valid radius");
             } catch (NotAnAddressException ex) {
-                //TODO: send a message to the user saying "No results. Enter a different address"
-                ex.printStackTrace();
-                System.out.println("not an address");
+                addr.setText("No address found. Please try a different search.");
             }
-
         });
         return searchButton;
     }
