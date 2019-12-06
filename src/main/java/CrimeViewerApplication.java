@@ -27,6 +27,7 @@ public class CrimeViewerApplication extends Application {
     private ScrollPane listView;
     private SummaryChartView scv;
     private ScrollPane summaryView;
+    private TableView<CrimeRelativeToAddress> table;
 
     @Override
     public void init() {
@@ -114,7 +115,7 @@ public class CrimeViewerApplication extends Application {
                 execJsFunc();
 
                 //update list view
-                this.listView.setContent(updateTableView());
+                updateTableView();
 
                 //update summary view
                 this.scv.updateSummaryForNewAddress();
@@ -161,9 +162,9 @@ public class CrimeViewerApplication extends Application {
     }
 
     private ScrollPane setUpTableView() {
-        TableView<CrimeRelativeToAddress> table = new TableView<>();
-        setUpTableDesign(table);
-        table.setPlaceholder(new Label("To get started, search for an address above!"));
+        this.table = new TableView<>();
+        setUpTableDesign();
+        this.table.setPlaceholder(new Label("To get started, search for an address above!"));
 
         // make a scroll bar
         ScrollPane s = new ScrollPane();
@@ -174,7 +175,7 @@ public class CrimeViewerApplication extends Application {
         return s;
     }
 
-    private void setUpTableDesign(TableView<CrimeRelativeToAddress> table) {
+    private void setUpTableDesign() {
         table.setEditable(false);
 
         //set up columns
@@ -197,16 +198,12 @@ public class CrimeViewerApplication extends Application {
         table.getColumns().addAll(date, type, description, address);
     }
 
-    private TableView<CrimeRelativeToAddress> updateTableView() {
-        TableView<CrimeRelativeToAddress> table = (TableView<CrimeRelativeToAddress>) this.listView.getContent();
-
+    private void updateTableView() {
         System.out.println("Crimes found within radius: " + this.latestCrimes.count());
 
         ObservableList<CrimeRelativeToAddress> data =
                 FXCollections.observableList(this.latestCrimes.getCrimesRelativeTo());
         table.setItems(data);
-
-        return table;
     }
 
     private ScrollPane setUpSummaryView() {
