@@ -76,23 +76,20 @@ public class SummaryChartView {
         //update day of week chart
         XYChart.Series<String, Number> dayOfWeekUpdate = new XYChart.Series<>();
         this.latestCrimes.countByDayOfWeek().entrySet().stream()
-                .peek(System.out::println)
                 .forEach(e -> dayOfWeekUpdate.getData().add(new XYChart.Data<>(e.getKey().toString(),e.getValue())));
-        this.dayOfWeekChart.getData().addAll(dayOfWeekUpdate);
+        this.dayOfWeekChart.getData().add(dayOfWeekUpdate);
 
         //update day of month chart
         XYChart.Series<String, Number> dayOfMonthUpdate = new XYChart.Series<>();
         this.latestCrimes.countByDayOfMonth().entrySet().stream()
-                .peek(System.out::println)
                 .forEach(e -> dayOfMonthUpdate.getData().add(new XYChart.Data<>(e.getKey().toString(),e.getValue())));
-        this.dayOfMonthChart.getData().addAll(dayOfMonthUpdate);
+        this.dayOfMonthChart.getData().add(dayOfMonthUpdate);
 
         //update type of crime chart
         XYChart.Series<String, Number> typeOfCrimeUpdate = new XYChart.Series<>();
         this.latestCrimes.countByType().entrySet().stream()
-                .peek(System.out::println)
                 .forEach(e -> typeOfCrimeUpdate.getData().add(new XYChart.Data<>(e.getKey(),e.getValue())));
-        this.typeOfCrimeChart.getData().addAll(typeOfCrimeUpdate);
+        this.typeOfCrimeChart.getData().add(typeOfCrimeUpdate);
 
     }
 
