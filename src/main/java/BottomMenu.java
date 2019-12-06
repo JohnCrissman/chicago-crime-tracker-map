@@ -33,6 +33,7 @@ public class BottomMenu {
 
         //create full bottom menu
         this.fullBottomMenu = new BorderPane();
+        TopMenu.setPaneStyle(this.fullBottomMenu, " #b6b6af");
         this.fullBottomMenu.setLeft(buttonPalette);
         this.fullBottomMenu.setRight(exitProgramButton);
 

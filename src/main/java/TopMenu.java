@@ -1,3 +1,4 @@
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -5,6 +6,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 
 
 public class TopMenu {
@@ -17,6 +19,7 @@ public class TopMenu {
         this.topMenuPane = new HBox();
         this.topMenuPane.setSpacing(10);
         this.topMenuPane.setAlignment(Pos.CENTER);
+        TopMenu.setPaneStyle(this.topMenuPane, "#b6b6af");
 
         this.setUpAddressSearch();
         this.setUpRadiusMenu();
@@ -41,6 +44,11 @@ public class TopMenu {
     private void setUpSearchButton() {
         this.searchButton = new Button("Search");
         this.searchButton.setPrefSize(100, 20);
+    }
+
+    public static void setPaneStyle(Pane menu, String color) {
+        menu.setPadding(new Insets(15, 12, 15, 12));
+        menu.setStyle("-fx-background-color: " + color+ ";");
     }
 
     public TextField getAddressSearchField() {

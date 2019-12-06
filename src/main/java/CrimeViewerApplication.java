@@ -3,7 +3,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -68,11 +67,10 @@ public class CrimeViewerApplication extends Application {
 
     private void createTopMenu(BorderPane basePane) {
         TopMenu topMenu = new TopMenu(basePane);
-        setPaneStyle(topMenu.getTopMenuPane(), "#b6b6af");
-        this.setUpSearchButton(topMenu);
+        this.setUpSearchFunction(topMenu);
     }
 
-    private void setUpSearchButton(TopMenu topMenu) {
+    private void setUpSearchFunction(TopMenu topMenu) {
         Button search = topMenu.getSearchButton();
         TextField addr = topMenu.getAddressSearchField();
         ChoiceBox<String> radius = topMenu.getRadiusMenu();
@@ -191,14 +189,7 @@ public class CrimeViewerApplication extends Application {
         menu.put("View Map", this.mapView);
         menu.put("View List", this.listView);
         menu.put("Summary", this.summaryView);
-
         BottomMenu bottom = new BottomMenu(basePane, menu);
-        setPaneStyle(bottom.getFullBottomMenu(), " #b6b6af");
-    }
-
-    private void setPaneStyle(Pane menu, String color) {
-        menu.setPadding(new Insets(15, 12, 15, 12));
-        menu.setStyle("-fx-background-color: " + color+ ";");
     }
 
     @Override
