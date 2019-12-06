@@ -40,7 +40,6 @@ public class CrimeViewerApplication extends Application {
     private ScrollPane listView;
     private SummaryChartView scv;
     private ScrollPane summaryView;
-    private String addressSearchResult;
 
     @Override
     public void init() {
@@ -120,24 +119,21 @@ public class CrimeViewerApplication extends Application {
             try {
                 //update crimesRelativeTo in latestCrimes
                 this.latestCrimes.setCrimesWithinRadius(radiusValue, searchQuery);
-                this.addressSearchResult = this.latestCrimes.getRelativeAddress().getFullAddress();
-                //TODO: show addressSearchResult in search bar
-                System.out.println(this.addressSearchResult);
 
-                // update map
+                //update search bar to show query result
+                addr.setText(this.latestCrimes.getRelativeAddress().getFullAddress());
+
+                // update map view
                 execJsFunc();
 
-                //update list
+                //update list view
                 this.listView = setUpFilteredTableView();
 
-                //update summary
+                //update summary view
                 this.scv.updateSummaryForNewAddress();
 
                 Node currentView = this.basePane.getCenter();
-                if(currentView.equals(this.mapView)) {
-                    this.basePane.setCenter(this.mapView);
-                    // TODO: Figure out why listView isn't updating until you click away/back
-                } else if(currentView.equals(this.listView)) {
+                if(currentView.equals(this.listView)) {
                     this.basePane.setCenter(this.listView);
                 }
             } catch (IOException ex) {
@@ -265,67 +261,6 @@ public class CrimeViewerApplication extends Application {
 
         s.setContent(vb);
         return s;
-    }
-
-    private Group exampleOfAChart() {
-//        TODO: FILL IN THE CORRECT INFORMATION AND VOILA!
-//         check the observableMap and figure out how to add the data
-//            ObservableMap<DayOfWeekCrime, Integer> data =
-//                    FXCollections.observableMap(this.latestCrimes.countByDayOfWeek());
-
-        //Defining the x axis
-        CategoryAxis xAxis = new CategoryAxis();
-
-        xAxis.setCategories(FXCollections.observableArrayList(DayOfWeekCrime.stringValues()));
-        xAxis.setLabel("x-axis label");
-
-        //Defining the y axis
-        NumberAxis yAxis = new NumberAxis();
-        yAxis.setLabel("y-axis label");
-
-        //Creating the Bar chart
-        BarChart<String, Number> barChartByDayOfMonth = new BarChart<>(xAxis, yAxis);
-        barChartByDayOfMonth.setTitle("Comparison between various crimes");
-
-        //Prepare XYChart.Series objects by setting data
-        XYChart.Series<String, Number> series1 = new XYChart.Series<>();
-        series1.setName("Count by Day of Week");
-
-//      TODO: adds data into the chart
-        this.latestCrimes.countByDayOfWeek().entrySet().stream()
-                .peek(System.out::println)
-                .peek(e -> System.out.println("Sup"))
-                .forEach(e -> series1.getData().add(new XYChart.Data<>(e.getKey().toString(),e.getValue())));
-       /* Arrays.asList( new XYChart.Data<>("Monday", 1.0),
-                new XYChart.Data<>("Wednesday", 3.0),
-                new XYChart.Data<>("Sunday", 4.0),
-                new XYChart.Data<>("Tuesday", 6.0))
-                .stream().forEach( v -> series1.getData().add(v));*/
-//        series1.getData().add(new XYChart.Data<>("Monday", 1.0));
-//        series1.getData().add(new XYChart.Data<>("Friday", 3.0));
-//        series1.getData().add(new XYChart.Data<>("Sunday", 4.0));
-//        series1.getData().add(new XYChart.Data<>("Tuesday", 5.0));
-
-        /*XYChart.Series<String, Number> series2 = new XYChart.Series<>();
-        series2.setName("Audi");
-        series2.getData().add(new XYChart.Data<>("John", 10.0));
-        series2.getData().add(new XYChart.Data<>("User rating", 6.0));
-
-        series2.getData().add(new XYChart.Data<>("Mari", 4.0));
-        series2.getData().add(new XYChart.Data<>("Beth", 4.0));
-
-        XYChart.Series<String, Number> series3 = new XYChart.Series<>();
-        series3.setName("Ford");
-        series3.getData().add(new XYChart.Data<>("John", 4.0));
-        series3.getData().add(new XYChart.Data<>("User rating", 2.0));
-        series3.getData().add(new XYChart.Data<>("Mari", 3.0));
-        series3.getData().add(new XYChart.Data<>("Beth", 6.0));
-*/
-
-        //Setting the data to bar chart
-        barChartByDayOfMonth.getData().addAll(series1) ; //, series2, series3);
-
-        return new Group(barChartByDayOfMonth);
     }
 
     private BorderPane createBottomMenu(BorderPane basePane) {
