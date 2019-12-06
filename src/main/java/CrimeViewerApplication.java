@@ -26,7 +26,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -39,6 +38,7 @@ public class CrimeViewerApplication extends Application {
     private BorderPane basePane;
     private WebView mapView;
     private ScrollPane listView;
+    private SummaryChartView scv;
     private ScrollPane summaryView;
     private String addressSearchResult;
 
@@ -47,16 +47,10 @@ public class CrimeViewerApplication extends Application {
         try{
             this.latestCrimes = new Crimes();
         }catch (IOException e){
-            System.out.println("Please make sure you are connected to internet");
+            System.out.println("You must be connected to the internet; please check your connection and try again.");
             System.out.println(e.getMessage());
             System.exit(0);
-        /*}catch (UnknownHostException e){
-            System.out.println(e.getMessage());
-*/
-        }catch (ParseException e){
-            System.out.println(e.getMessage());
-
-        }catch(Exception e){
+        } catch(ParseException e) {
             e.printStackTrace();
         }
     }
@@ -131,19 +125,19 @@ public class CrimeViewerApplication extends Application {
                 System.out.println(this.addressSearchResult);
 
                 // update map
-//                execJsFunc();
-
+                execJsFunc();
 
                 //update list
                 this.listView = setUpFilteredTableView();
 
-                Group root = exampleOfAChart();
-                this.summaryView.setContent(root);
+                //update summary
+                this.scv.updateSummaryForNewAddress();
 
                 Node currentView = this.basePane.getCenter();
                 if(currentView.equals(this.mapView)) {
                     this.basePane.setCenter(this.mapView);
-                } else {
+                    // TODO: Figure out why listView isn't updating until you click away/back
+                } else if(currentView.equals(this.listView)) {
                     this.basePane.setCenter(this.listView);
                 }
             } catch (IOException ex) {
@@ -164,18 +158,11 @@ public class CrimeViewerApplication extends Application {
 
     private void execJsFunc() {
         String jsFunctionCall;
-        List<CrimeRelativeToAddress> jsLi = this.latestCrimes.getCrimesRelativeTo()
-                .stream()
-//                .limit(600)
-//                .sorted((cp1,cp2) -> (int)(cp1.getProximity() - cp2.getProximity()))
-                .collect(toList());
-        System.out.println("Size: " + jsLi.size());
-
         jsFunctionCall = "showCrimesOnMap('" +
-                JSONArray.toJSONString(jsLi) +
-                "', '" +
-                this.latestCrimes.getRelativeAddress().toString() +
-                "')";
+                JSONArray.toJSONString(this.latestCrimes.getCrimesRelativeTo()
+                        .stream()
+                        .limit(1000)
+                        .collect(toList())) + "', '" + this.latestCrimes.getRelativeAddress().toString() + "')";
 
         this.mapView.getEngine().executeScript(jsFunctionCall);
     }
@@ -273,10 +260,9 @@ public class CrimeViewerApplication extends Application {
 
     private ScrollPane setUpSummaryView() {
         ScrollPane s = new ScrollPane();
-        VBox vb = new VBox();
+        this.scv = new SummaryChartView(this.latestCrimes);
+        FlowPane vb = this.scv.getViewOfCharts();
 
-        Text placeholder = new Text("Placeholder");
-        vb.getChildren().add(placeholder);
         s.setContent(vb);
         return s;
     }
@@ -290,7 +276,7 @@ public class CrimeViewerApplication extends Application {
         //Defining the x axis
         CategoryAxis xAxis = new CategoryAxis();
 
-        xAxis.setCategories(FXCollections.<String>observableArrayList(DayOfWeekCrime.stringValues()));
+        xAxis.setCategories(FXCollections.observableArrayList(DayOfWeekCrime.stringValues()));
         xAxis.setLabel("x-axis label");
 
         //Defining the y axis
@@ -307,8 +293,8 @@ public class CrimeViewerApplication extends Application {
 
 //      TODO: adds data into the chart
         this.latestCrimes.countByDayOfWeek().entrySet().stream()
-//                .peek(System.out::println)
-//                .peek(e -> System.out.println("Sup"))
+                .peek(System.out::println)
+                .peek(e -> System.out.println("Sup"))
                 .forEach(e -> series1.getData().add(new XYChart.Data<>(e.getKey().toString(),e.getValue())));
        /* Arrays.asList( new XYChart.Data<>("Monday", 1.0),
                 new XYChart.Data<>("Wednesday", 3.0),
@@ -351,7 +337,7 @@ public class CrimeViewerApplication extends Application {
 
         Button mapViewButton = new Button("View Map");
         Button listViewButton = new Button("View List");
-        Button summaryViewButton = new Button("View Summary");
+        Button summaryViewButton = new Button("Summary");
 
         //create View Map button
         mapViewButton.setPrefSize(100, 20);
