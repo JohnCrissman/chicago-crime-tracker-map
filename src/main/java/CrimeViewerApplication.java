@@ -161,7 +161,7 @@ public class CrimeViewerApplication extends Application {
         jsFunctionCall = "showCrimesOnMap('" +
                 JSONArray.toJSONString(this.latestCrimes.getCrimesRelativeTo()
                         .stream()
-                        .sorted((cp1,cp2) -> (int)(cp1.getProximity() - cp2.getProximity()))
+                        .limit(1000)
                         .collect(toList())) + "', '" + this.latestCrimes.getRelativeAddress().toString() + "')";
 
         this.mapView.getEngine().executeScript(jsFunctionCall);
