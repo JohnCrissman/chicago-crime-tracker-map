@@ -1,13 +1,9 @@
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
-
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.DateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -27,24 +23,23 @@ public class Crimes {
     }
 
     private void query(int numOfPastWeeks) throws IOException, ParseException{
-        String fullUrl = getFullURL("https://data.cityofchicago.org/resource/ijzp-q8t2.json", numOfPastWeeks);
+        String fullUrl = getFullURL(numOfPastWeeks);
         System.out.println("Query: " + fullUrl);
         JSONArray jsonArr = APITalker.getArrayResponse(fullUrl, false);
         this.crimes = Crimes.createCrimeList(jsonArr);
     }
 
-    private String getFullURL(String url, int numOfPastWeeks){
+    private String getFullURL(int numOfPastWeeks){
+        String url = "https://data.cityofchicago.org/resource/ijzp-q8t2.json";
         LocalDateTime endOfTimeFrame = LocalDateTime.now().minus(1, ChronoUnit.WEEKS);
-        System.out.println(endOfTimeFrame);
         LocalDateTime beginningOfTimeFrame = endOfTimeFrame.minus(numOfPastWeeks, ChronoUnit.WEEKS);
-        System.out.println(beginningOfTimeFrame);
+
         String endDate = endOfTimeFrame.toString().split("\\.")[0];
         String startDate = beginningOfTimeFrame.toString().split("\\.")[0];
 
-        String url_dateRange = "date between '" + startDate + "' and '" + endDate + "'";
+        String dateRangeQuery = "date between '" + startDate + "' and '" + endDate + "'";
 
-        String fullUrl = url + "?$limit=100000&$where=" + URLEncoder.encode(url_dateRange, StandardCharsets.UTF_8);
-        return fullUrl;
+        return url + "?$limit=100000&$where=" + URLEncoder.encode(dateRangeQuery, StandardCharsets.UTF_8);
     }
 
     private static List<Crime> createCrimeList(JSONArray jsonArr) {
@@ -56,19 +51,18 @@ public class Crimes {
         pathOfLog = pathOfLog.replace("map.html", filename);
 
         try(FileOutputStream fOut = new FileOutputStream(pathOfLog);
-            DataOutputStream logFile = new DataOutputStream(fOut)){
+            DataOutputStream output = new DataOutputStream(fOut)) {
+            output.writeBytes("Date\t Type\t Description\t Latitude\t Longitude\t Block\n");
             for(Object o : jsonArr) {
                 JSONObject jsonItem = (JSONObject) o;
-                Crime newCrime = Crimes.createCrime(jsonItem, logFile);
+                Crime newCrime = Crimes.createCrime(jsonItem, output);
                 if (newCrime != null) {
                     listOfCrimes.add(newCrime);
                 }
             }
-        }catch(IOException ignored){
-        }
+        } catch(IOException ignored) { }
 
-        System.out.print("Log of incomplete crime entries (discarded) was saved to: ");
-        System.out.println(pathOfLog);
+        System.out.println("Log of incomplete crime entries (discarded) was saved to: " + pathOfLog);
 
         return listOfCrimes;
     }
@@ -88,11 +82,9 @@ public class Crimes {
         } catch(java.text.ParseException e){
             System.out.println("Not a number, dropped crime.");
         } catch(NullPointerException e) {
-
-            String logMessage = "Dropped:\tDate: " + sDate + ", type: " + type + ", descr: " + typeDescription
-                    + ", Lat: " + latitude + ", Long: " + longitude + ", Block:" + block + "\n";
+            String logMessage = sDate + "\t " + type + "\t " + typeDescription + "\t "
+                    + latitude + "\t " + longitude + "\t " + block + "\n";
             log.writeBytes(logMessage);
-//            System.out.println(logMessage);
         }
 
         return newCrime;
