@@ -7,17 +7,37 @@ import java.nio.charset.StandardCharsets;
 public final class AddressHelper {
     private AddressHelper() {}
 
-    public static double distanceBetweenTwoLocations(Address add1, Address add2){
-        double xDelta = add1.getLongInMiles() - add2.getLongInMiles();
-        double yDelta = add1.getLatInMiles() - add2.getLatInMiles();
-        return Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
+//    public static double distanceBetweenTwoLocations(Address add1, Address add2){
+//        double xDelta = add1.getLongInMiles() - add2.getLongInMiles();
+//        double yDelta = add1.getLatInMiles() - add2.getLatInMiles();
+//        return Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
+//    }
+
+    public static double propperDistanceBetweenTwoLocations(Address add1, Address add2){
+        double lat1 = add1.getLatitude();
+        double lat2 = add2.getLatitude();
+        double lon1 = add1.getLongitude();
+        double lon2 = add2.getLongitude();
+
+        double R = 6371e3 / 1609.34; // miles
+        double phi1 = Math.toRadians(lat1);
+        double phi2 = Math.toRadians(lat2);
+        double theta = Math.toRadians((lat2-lat1));
+        double lambda = Math.toRadians((lon2-lon1));
+
+        double a = Math.sin(theta/2) * Math.sin(theta/2) +
+                Math.cos(phi1) * Math.cos(phi2) *
+                        Math.sin(lambda/2) * Math.sin(lambda/2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        System.out.println(R*c);
+        return  R * c ;
     }
 
     public static boolean isWithinRadius(Address add1, Address add2, Double radius){
         // TODO: Troubleshoot this!
         //  "2400 N St Louis Ave"/"2 mi" returns 604 crimes,
         //  "2900 N St Louis Ave"/"5 mi" returns 0 crimes.
-        double distance = distanceBetweenTwoLocations(add1, add2);
+        double distance = propperDistanceBetweenTwoLocations(add1, add2);
         boolean result = distance < radius;
         return result;
     }
