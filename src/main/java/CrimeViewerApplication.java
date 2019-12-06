@@ -18,7 +18,6 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -28,7 +27,7 @@ public class CrimeViewerApplication extends Application {
     private Crimes latestCrimes;
     private WebView mapView;
     private ScrollPane listView;
-    private SummaryChartView scv;
+    private SummaryView scv;
     private ScrollPane summaryView;
     private TableView<CrimeRelativeToAddress> table;
 
@@ -205,7 +204,7 @@ public class CrimeViewerApplication extends Application {
 
     private ScrollPane setUpSummaryView() {
         ScrollPane s = new ScrollPane();
-        this.scv = new SummaryChartView(this.latestCrimes);
+        this.scv = new SummaryView(this.latestCrimes);
         FlowPane vb = this.scv.getViewOfCharts();
 
         s.setContent(vb);

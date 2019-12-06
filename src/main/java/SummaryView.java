@@ -8,64 +8,42 @@ import java.util.List;
 import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 
-public class SummaryChartView {
+public class SummaryView {
     private FlowPane viewOfCharts;
     private BarChart<String, Number> dayOfWeekChart;
     private BarChart<String, Number> dayOfMonthChart;
     private BarChart<String, Number> typeOfCrimeChart;
     private Crimes latestCrimes;
 
-    public SummaryChartView(Crimes latestCrimes) {
+    public SummaryView(Crimes latestCrimes) {
         this.latestCrimes = latestCrimes;
         this.viewOfCharts = new FlowPane();
-        this.setUpDayOfWeekChart();
-        this.setUpDayOfMonthChart();
-        this.setUpTypeOfCrimeChart();
+
+        this.dayOfWeekChart = this.setUpChart("Crimes by day of week",
+                                DayOfWeekCrime.stringValues());
+        this.dayOfMonthChart = this.setUpChart("Crimes by day of month",
+                                Stream.iterate(1, x -> x + 1).limit(31).map(String::valueOf).collect(toList()));
+        this.typeOfCrimeChart = this.setUpChart("Number of each type of crime",
+                                null);
     }
 
-    private void setUpDayOfWeekChart() {
+    private BarChart<String, Number> setUpChart(String title,
+                                                List<String> xCategories) {
         //Defining the axes
         CategoryAxis xAxis = new CategoryAxis();
-        xAxis.setCategories(FXCollections.observableArrayList(DayOfWeekCrime.stringValues()));
+        if (xCategories != null) {
+            xAxis.setCategories(FXCollections.observableArrayList(xCategories));
+        }
         NumberAxis yAxis = new NumberAxis();
 
-        //Creating the Bar chart
-        this.dayOfWeekChart = new BarChart<>(xAxis, yAxis);
-        this.dayOfWeekChart.setTitle("Crimes by day of week");
-        this.dayOfWeekChart.setLegendVisible(false);
+        //Creating the bar chart
+        BarChart<String, Number> currentChart = new BarChart<>(xAxis, yAxis);
+        currentChart.setTitle(title);
+        currentChart.setLegendVisible(false);
 
-        this.viewOfCharts.getChildren().add(this.dayOfWeekChart);
-    }
+        this.viewOfCharts.getChildren().add(currentChart);
 
-    private void setUpDayOfMonthChart() {
-        //Defining the x & y axes
-        CategoryAxis xAxis = new CategoryAxis();
-        List<String> allDays = Stream.iterate("1", x -> (Integer.parseInt(x) + 1)+"")
-                                    .limit(31)
-                                    .collect(toList());
-        xAxis.setCategories(FXCollections.observableArrayList(allDays));
-        NumberAxis yAxis = new NumberAxis();
-
-        //Creating the Bar chart
-        this.dayOfMonthChart = new BarChart<>(xAxis, yAxis);
-        this.dayOfMonthChart.setTitle("Crimes by day of month");
-        this.dayOfMonthChart.setLegendVisible(false);
-
-        this.viewOfCharts.getChildren().add(this.dayOfMonthChart);
-    }
-
-    //currently empty
-    private void setUpTypeOfCrimeChart() {
-        //Defining the x & y axes
-        CategoryAxis xAxis = new CategoryAxis();
-        NumberAxis yAxis = new NumberAxis();
-
-        //Creating the Bar chart
-        this.typeOfCrimeChart = new BarChart<>(xAxis, yAxis);
-        this.typeOfCrimeChart.setTitle("Number of each type of crime");
-        this.typeOfCrimeChart.setLegendVisible(false);
-
-        this.viewOfCharts.getChildren().add(this.typeOfCrimeChart);
+        return currentChart;
     }
 
     public void updateSummaryForNewAddress() {
