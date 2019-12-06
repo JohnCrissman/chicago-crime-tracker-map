@@ -1,5 +1,3 @@
-import java.util.Date;
-
 public class CrimeRelativeToAddress extends Crime {
     private double proximity;
 
@@ -9,7 +7,7 @@ public class CrimeRelativeToAddress extends Crime {
     }
 
     public void setProximity(Address address) {
-        this.proximity = AddressHelper.propperDistanceBetweenTwoLocations(this.getAddress(), address);
+        this.proximity = AddressHelper.properDistanceBetweenTwoLocations(this.getAddress(), address);
     }
 
     public double getProximity(){

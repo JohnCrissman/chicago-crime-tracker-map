@@ -23,9 +23,7 @@ public class Crimes {
     public Crimes() throws ParseException, IOException {
         int numOfWeeks = 5;
         this.query(numOfWeeks);
-        //this.relativeAddress = new Address();
         this.radius = 0.0;
-        //this.crimesRelativeTo = new ArrayList<>();
     }
 
     private void query(int numOfPastWeeks) throws IOException, ParseException{
@@ -49,21 +47,14 @@ public class Crimes {
 
     private static List<Crime> createCrimeList(JSONArray jsonArr) {
         List<Crime> listOfCrimes = new ArrayList<>();
+        String formatDateTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 
-        LocalDateTime today = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        String formatDateTime = today.format(formatter);
-        System.out.println("1: "+formatDateTime);
         String filename =  "logFile_"+ formatDateTime +".log";
-        System.out.println("2: "+filename);
+        String pathOfLog = Crimes.class.getResource("map.html").getPath();
+        pathOfLog = pathOfLog.replace("map.html", filename);
 
-        String logFilename = Crimes.class.getResource("map.html").getPath();
-        logFilename = logFilename.replace("map.html", filename);
-        System.out.println("3: " +logFilename);
-
-        try(FileOutputStream fOut = new FileOutputStream(logFilename);
+        try(FileOutputStream fOut = new FileOutputStream(pathOfLog);
             DataOutputStream logFile = new DataOutputStream(fOut)){
-
             for(Object o : jsonArr) {
                 JSONObject jsonItem = (JSONObject) o;
                 Crime newCrime = Crimes.createCrime(jsonItem, logFile);
@@ -71,14 +62,11 @@ public class Crimes {
                     listOfCrimes.add(newCrime);
                 }
             }
-
-        }catch(FileNotFoundException e){
-           //TODO: get rid of stack trace
-            e.printStackTrace();
-        }catch (IOException e){
-           //TODO: get rid of stack trace
-            e.printStackTrace();
+        }catch(IOException ignored){
         }
+
+        System.out.print("Log of incomplete crime entries (discarded) was saved to: ");
+        System.out.println(pathOfLog);
 
         return listOfCrimes;
     }
