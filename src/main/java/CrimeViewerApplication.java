@@ -207,6 +207,9 @@ public class CrimeViewerApplication extends Application {
         return s;
     }
 
+    // TODO: create a separate BottomMenu class
+    //  constructor takes the basepane, and a dictionary of button/pane pairs
+    //  creates a button for each key, and sets the on action to show that button
     private void createBottomMenu(BorderPane basePane) {
         //create bottom pane and set up style
         BorderPane fullBottomMenu = new BorderPane();
@@ -269,6 +272,7 @@ public class CrimeViewerApplication extends Application {
         basePane.setBottom(fullBottomMenu);
     }
 
+    // TODO: this still lives here and is called during start() on each pane
     private void setPaneStyle(Pane menu, String color) {
         menu.setPadding(new Insets(15, 12, 15, 12));
         menu.setStyle("-fx-background-color: " + color+ ";");
