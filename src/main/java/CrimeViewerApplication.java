@@ -44,15 +44,9 @@ public class CrimeViewerApplication extends Application {
     public void start(Stage stage) {
         BorderPane basePane = new BorderPane();
 
-        HBox topMenu = createTopMenu();
-        basePane.setTop(topMenu);
-        BorderPane bottomMenu = createBottomMenu(basePane);
-        basePane.setBottom(bottomMenu);
-
-        this.listView = setUpTableView();
-        this.mapView = setUpMapView();
-        this.summaryView = setUpSummaryView();
-        basePane.setCenter(this.mapView);
+        createTopMenu(basePane);
+        createMainViews(basePane);
+        createBottomMenu(basePane);
 
         Scene scene = new Scene(basePane, 1000, 700, Color.web("#666970"));
         stage.setScene(scene);
@@ -60,7 +54,15 @@ public class CrimeViewerApplication extends Application {
         stage.show();
     }
 
-    private HBox createTopMenu() {
+    private void createMainViews(BorderPane basePane) {
+        this.listView = setUpTableView();
+        this.mapView = setUpMapView();
+        this.summaryView = setUpSummaryView();
+
+        basePane.setCenter(this.mapView);
+    }
+
+    private void createTopMenu(BorderPane basePane) {
         // pane setup
         HBox topMenu = new HBox();
         setPaneStyle(topMenu, "#b6b6af");
@@ -73,7 +75,7 @@ public class CrimeViewerApplication extends Application {
         Button search = setUpSearchButton(addr, radius);
         topMenu.getChildren().addAll(addr, radius, search);
 
-        return topMenu;
+        basePane.setTop(topMenu);
     }
 
     private TextField setUpAddressSearch() {
@@ -110,7 +112,7 @@ public class CrimeViewerApplication extends Application {
                 addr.setText(this.latestCrimes.getRelativeAddress().getFullAddress());
 
                 // update map view
-                execJsFunc();
+                updateMapView();
 
                 //update list view
                 updateTableView();
@@ -130,7 +132,7 @@ public class CrimeViewerApplication extends Application {
         return searchButton;
     }
 
-    private void execJsFunc() {
+    private void updateMapView() {
         String jsFunctionCall;
         jsFunctionCall = "showCrimesOnMap('" +
                 JSONArray.toJSONString(this.latestCrimes.getCrimesRelativeTo()
@@ -205,7 +207,7 @@ public class CrimeViewerApplication extends Application {
         return s;
     }
 
-    private BorderPane createBottomMenu(BorderPane basePane) {
+    private void createBottomMenu(BorderPane basePane) {
         //create bottom pane and set up style
         BorderPane fullBottomMenu = new BorderPane();
         setPaneStyle(fullBottomMenu, " #b6b6af");
@@ -264,7 +266,7 @@ public class CrimeViewerApplication extends Application {
         fullBottomMenu.setLeft(changeViewPalette);
         fullBottomMenu.setRight(exitProgramButton);
 
-        return fullBottomMenu;
+        basePane.setBottom(fullBottomMenu);
     }
 
     private void setPaneStyle(Pane menu, String color) {
