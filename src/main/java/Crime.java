@@ -8,13 +8,28 @@ public class Crime {
     private Address address;  // address contains block street, lat and lon
     private Date date;
 
-    // constructor for query() in Crimes class.
+    // constructor for createCrime() in Crimes class.
     public Crime(String type, String typeDescription, String latitude,
                  String longitude, String date, String block) throws ParseException {
         this.type = type;
         this.typeDescription = typeDescription;
         this.address = new Address(Double.parseDouble(latitude),
                 Double.parseDouble(longitude), block);
+        // TODO: use this try-catch to look for lat/long by block -- however,
+        //  it takes a LONG time!! :( and some results return "Chicago, IL USA" which should then be discarded
+        /*try {
+            this.address = new Address(Double.parseDouble(latitude),
+                    Double.parseDouble(longitude), block);
+        } catch (Exception ex) {
+            String addressSearch = AddressHelper.parseBlock(block) + " " + AddressHelper.parseStreet(block) + ", Chicago, IL";
+
+            try {
+                this.address = AddressHelper.getAddressFromGoogleAPI(addressSearch);
+                System.out.println(this.address.getFullAddress());
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+        }*/
         this.date = convertDate(date);
     }
 
@@ -27,10 +42,8 @@ public class Crime {
     }
 
     private Date convertDate(String dateAsString) throws ParseException {
-        dateAsString = dateAsString.substring(0,10);  // retain yyyy-MM-dd
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = formatter.parse(dateAsString);
-        return date;
+        return formatter.parse(dateAsString.substring(0,10)); // substring retains yyyy-MM-dd info
     }
 
     @Override
