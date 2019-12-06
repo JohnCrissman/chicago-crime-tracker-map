@@ -44,19 +44,22 @@ public class Crimes {
     }
 
     private static List<Crime> createCrimeList(JSONArray jsonArr) {
+        // TODO: File write
         List<Crime> listOfCrimes = new ArrayList<>();
+        //open file
 
         for(Object o : jsonArr) {
             JSONObject jsonItem = (JSONObject) o;
-            Crime newCrime = Crimes.createCrime(jsonItem);
+            Crime newCrime = Crimes.createCrime(jsonItem); //pass the error log file
             if (newCrime != null) {
                 listOfCrimes.add(newCrime);
             }
         }
+        //close file
         return listOfCrimes;
     }
 
-    private static Crime createCrime(JSONObject j) {
+    private static Crime createCrime(JSONObject j) { //also accepts error log file
         String sDate = (String) j.get("date");
         String type = (String) j.get("primary_type");
         String typeDescription = (String) j.get("description");
@@ -70,6 +73,7 @@ public class Crimes {
         } catch(java.text.ParseException e){
             System.out.println("Not a number, dropped crime.");
         } catch(NullPointerException e) {
+            //replace this with a file.write()
             System.out.print("Dropped: ");
             System.out.println("Date: " + sDate + ", type: " + type + ", descr: " + typeDescription
                     + ", Lat: " + latitude + ", Long: " + longitude + ", Block:" + block);
