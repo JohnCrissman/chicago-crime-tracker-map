@@ -67,41 +67,17 @@ public class CrimeViewerApplication extends Application {
     }
 
     private void createTopMenu(BorderPane basePane) {
-        // pane setup
-        HBox topMenu = new HBox();
-        setPaneStyle(topMenu, "#b6b6af");
-        topMenu.setSpacing(10);
-        topMenu.setAlignment(Pos.CENTER);
-
-        // fields setup
-        TextField addr = setUpAddressSearch();
-        ChoiceBox<String> radius = setUpRadiusMenu();
-        Button search = setUpSearchButton(addr, radius);
-        topMenu.getChildren().addAll(addr, radius, search);
-
-        basePane.setTop(topMenu);
+        TopMenu topMenu = new TopMenu(basePane);
+        setPaneStyle(topMenu.getTopMenuPane(), "#b6b6af");
+        this.setUpSearchButton(topMenu);
     }
 
-    private TextField setUpAddressSearch() {
-        TextField addr = new TextField("5500 N St Louis Ave");
-        addr.setPrefWidth(400);
-        return addr;
-    }
+    private void setUpSearchButton(TopMenu topMenu) {
+        Button search = topMenu.getSearchButton();
+        TextField addr = topMenu.getAddressSearchField();
+        ChoiceBox<String> radius = topMenu.getRadiusMenu();
 
-    private ChoiceBox<String> setUpRadiusMenu() {
-        ChoiceBox<String> radius = new ChoiceBox<>();
-        radius.getItems().addAll
-                ("0.25 mi", "0.5 mi", "0.75 mi", "1 mi", "2 mi", "5 mi");
-        radius.setValue("0.5 mi");
-        radius.setPrefWidth(100);
-        return radius;
-    }
-
-    private Button setUpSearchButton(TextField addr, ChoiceBox<String> radius) {
-        Button searchButton = new Button("Search");
-        searchButton.setPrefSize(100, 20);
-
-        searchButton.setOnAction(e -> {
+        search.setOnAction(e -> {
             // acquire search terms
             String searchQuery = addr.getCharacters().toString();
             String radiusSelection = radius.valueProperty().get();
@@ -124,7 +100,6 @@ public class CrimeViewerApplication extends Application {
                 //update summary view
                 this.scv.updateSummaryForNewAddress();
             } catch (IOException ex) {
-                System.out.println("whats up");
                 ex.printStackTrace();
             } catch (NotARadiusException ex) {
                 ex.printStackTrace();
@@ -133,7 +108,6 @@ public class CrimeViewerApplication extends Application {
                 addr.setText("No address found. Please try a different search.");
             }
         });
-        return searchButton;
     }
 
     private void updateMapView() {
