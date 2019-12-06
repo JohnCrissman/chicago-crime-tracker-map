@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -17,6 +18,10 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import static java.util.stream.Collectors.toList;
 
 public class CrimeViewerApplication extends Application {
@@ -211,65 +216,72 @@ public class CrimeViewerApplication extends Application {
     //  constructor takes the basepane, and a dictionary of button/pane pairs
     //  creates a button for each key, and sets the on action to show that button
     private void createBottomMenu(BorderPane basePane) {
-        //create bottom pane and set up style
-        BorderPane fullBottomMenu = new BorderPane();
-        setPaneStyle(fullBottomMenu, " #b6b6af");
+        Map<String, Node> menu = new LinkedHashMap<>(3);
+        menu.put("View Map", this.mapView);
+        menu.put("View List", this.listView);
+        menu.put("Summary", this.summaryView);
+        BottomMenu bottom = new BottomMenu(basePane, menu);
+        setPaneStyle(bottom.getFullBottomMenu(), " #b6b6af");
 
-        HBox changeViewPalette = new HBox();
-
-        Button mapViewButton = new Button("View Map");
-        Button listViewButton = new Button("View List");
-        Button summaryViewButton = new Button("Summary");
-
-        //create View Map button
-        mapViewButton.setPrefSize(100, 20);
-        mapViewButton.setOnAction(e -> {
-            basePane.setCenter(this.mapView);
-            mapViewButton.setDisable(true);
-            listViewButton.setDisable(false);
-            summaryViewButton.setDisable(false);
-        });
-        mapViewButton.setDisable(true);
-
-        //create View List button
-        listViewButton.setPrefSize(100, 20);
-        listViewButton.setOnAction(e -> {
-            basePane.setCenter(this.listView);
-            listViewButton.setDisable(true);
-            mapViewButton.setDisable(false);
-            summaryViewButton.setDisable(false);
-        });
-
-        //create View Summary button
-        summaryViewButton.setPrefSize(100, 20);
-        summaryViewButton.setOnAction(e -> {
-            basePane.setCenter(this.summaryView);
-            listViewButton.setDisable(false);
-            mapViewButton.setDisable(false);
-            summaryViewButton.setDisable(true);
-        });
-
-        //add buttons to pane
-        changeViewPalette.getChildren().addAll(
-                mapViewButton,
-                listViewButton,
-                summaryViewButton
-        );
-
-        //create exit button
-        Button exitProgramButton = new Button("Exit");
-        exitProgramButton.setPrefSize(100,20);
-        exitProgramButton.setOnAction(e -> {
-            try {
-                this.stop();
-            } catch(Exception ex) {
-                System.out.println(ex.getMessage());
-            } } );
-
-        fullBottomMenu.setLeft(changeViewPalette);
-        fullBottomMenu.setRight(exitProgramButton);
-
-        basePane.setBottom(fullBottomMenu);
+//        //create bottom pane and set up style
+//        BorderPane fullBottomMenu = new BorderPane();
+//        setPaneStyle(fullBottomMenu, " #b6b6af");
+//
+//        HBox changeViewPalette = new HBox();
+//
+//        Button mapViewButton = new Button("View Map");
+//        Button listViewButton = new Button("View List");
+//        Button summaryViewButton = new Button("Summary");
+//
+//        //create View Map button
+//        mapViewButton.setPrefSize(100, 20);
+//        mapViewButton.setOnAction(e -> {
+//            basePane.setCenter(this.mapView);
+//            mapViewButton.setDisable(true);
+//            listViewButton.setDisable(false);
+//            summaryViewButton.setDisable(false);
+//        });
+//        mapViewButton.setDisable(true);
+//
+//        //create View List button
+//        listViewButton.setPrefSize(100, 20);
+//        listViewButton.setOnAction(e -> {
+//            basePane.setCenter(this.listView);
+//            listViewButton.setDisable(true);
+//            mapViewButton.setDisable(false);
+//            summaryViewButton.setDisable(false);
+//        });
+//
+//        //create View Summary button
+//        summaryViewButton.setPrefSize(100, 20);
+//        summaryViewButton.setOnAction(e -> {
+//            basePane.setCenter(this.summaryView);
+//            listViewButton.setDisable(false);
+//            mapViewButton.setDisable(false);
+//            summaryViewButton.setDisable(true);
+//        });
+//
+//        //add buttons to pane
+//        changeViewPalette.getChildren().addAll(
+//                mapViewButton,
+//                listViewButton,
+//                summaryViewButton
+//        );
+//
+//        //create exit button
+//        Button exitProgramButton = new Button("Exit");
+//        exitProgramButton.setPrefSize(100,20);
+//        exitProgramButton.setOnAction(e -> {
+//            try {
+//                this.stop();
+//            } catch(Exception ex) {
+//                System.out.println(ex.getMessage());
+//            } } );
+//
+//        fullBottomMenu.setLeft(changeViewPalette);
+//        fullBottomMenu.setRight(exitProgramButton);
+//
+//        basePane.setBottom(fullBottomMenu);
     }
 
     // TODO: this still lives here and is called during start() on each pane
