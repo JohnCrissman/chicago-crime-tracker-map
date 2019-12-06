@@ -1,24 +1,14 @@
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -26,21 +16,16 @@ import org.json.simple.JSONArray;
 import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import static java.util.stream.Collectors.toList;
 
 public class CrimeViewerApplication extends Application {
     private Crimes latestCrimes;
-    private BorderPane basePane;
     private WebView mapView;
     private ScrollPane listView;
     private SummaryChartView scv;
     private ScrollPane summaryView;
-    private String addressSearchResult;
+    private TableView<CrimeRelativeToAddress> table;
 
     @Override
     public void init() {
@@ -57,17 +42,17 @@ public class CrimeViewerApplication extends Application {
 
     @Override
     public void start(Stage stage) {
-        this.basePane = new BorderPane();
+        BorderPane basePane = new BorderPane();
 
         HBox topMenu = createTopMenu();
-        this.basePane.setTop(topMenu);
-        BorderPane bottomMenu = createBottomMenu(this.basePane);
-        this.basePane.setBottom(bottomMenu);
+        basePane.setTop(topMenu);
+        BorderPane bottomMenu = createBottomMenu(basePane);
+        basePane.setBottom(bottomMenu);
 
         this.listView = setUpTableView();
         this.mapView = setUpMapView();
         this.summaryView = setUpSummaryView();
-        this.basePane.setCenter(this.mapView);
+        basePane.setCenter(this.mapView);
 
         Scene scene = new Scene(basePane, 1000, 700, Color.web("#666970"));
         stage.setScene(scene);
@@ -120,26 +105,18 @@ public class CrimeViewerApplication extends Application {
             try {
                 //update crimesRelativeTo in latestCrimes
                 this.latestCrimes.setCrimesWithinRadius(radiusValue, searchQuery);
-                this.addressSearchResult = this.latestCrimes.getRelativeAddress().getFullAddress();
-                //TODO: show addressSearchResult in search bar
-                System.out.println(this.addressSearchResult);
 
-                // update map
+                //update search bar to show query result
+                addr.setText(this.latestCrimes.getRelativeAddress().getFullAddress());
+
+                // update map view
                 execJsFunc();
 
-                //update list
-                this.listView = setUpFilteredTableView();
+                //update list view
+                updateTableView();
 
-                //update summary
+                //update summary view
                 this.scv.updateSummaryForNewAddress();
-
-                Node currentView = this.basePane.getCenter();
-                if(currentView.equals(this.mapView)) {
-                    this.basePane.setCenter(this.mapView);
-                    // TODO: Figure out why listView isn't updating until you click away/back
-                } else if(currentView.equals(this.listView)) {
-                    this.basePane.setCenter(this.listView);
-                }
             } catch (IOException ex) {
                 System.out.println("whats up");
                 ex.printStackTrace();
@@ -147,11 +124,8 @@ public class CrimeViewerApplication extends Application {
                 ex.printStackTrace();
                 System.out.println("not a valid radius");
             } catch (NotAnAddressException ex) {
-                //TODO: send a message to the user saying "No results. Enter a different address"
-                ex.printStackTrace();
-                System.out.println("not an address");
+                addr.setText("No address found. Please try a different search.");
             }
-
         });
         return searchButton;
     }
@@ -178,11 +152,9 @@ public class CrimeViewerApplication extends Application {
     }
 
     private ScrollPane setUpTableView() {
-        TableView<Crime> table = new TableView<>();
-        setUpNewTableView(table);
-
-        ObservableList<Crime> data = FXCollections.observableList(this.latestCrimes.getAllCrimes());
-        table.setItems(data);
+        this.table = new TableView<>();
+        setUpTableDesign();
+        this.table.setPlaceholder(new Label("To get started, search for an address above!"));
 
         // make a scroll bar
         ScrollPane s = new ScrollPane();
@@ -193,49 +165,7 @@ public class CrimeViewerApplication extends Application {
         return s;
     }
 
-    private void setUpNewTableView(TableView<Crime> table) {
-        table.setEditable(false);
-
-        //set up columns
-        TableColumn<Crime, Date> date = new TableColumn<>("Date");
-        date.setMinWidth(100);
-        date.setCellValueFactory(new PropertyValueFactory<>("date"));
-
-        TableColumn<Crime, String> type = new TableColumn<>("Type");
-        type.setMinWidth(150);
-        type.setCellValueFactory(new PropertyValueFactory<>("type"));
-
-        TableColumn<Crime, String> description = new TableColumn<>("Description");
-        description.setMinWidth(300);
-        description.setCellValueFactory(new PropertyValueFactory<>("typeDescription"));
-
-        TableColumn<Crime, String> address = new TableColumn<>("Block");
-        address.setMinWidth(300);
-        address.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getAddress().getFullAddress()));
-
-        table.getColumns().addAll(date, type, description, address);
-    }
-
-    private ScrollPane setUpFilteredTableView() {
-        TableView<CrimeRelativeToAddress> table = new TableView<>();
-        setUpNewFilteredTableView(table);
-
-        System.out.println("Crimes found in radius: " + this.latestCrimes.count());
-
-        ObservableList<CrimeRelativeToAddress> data =
-                FXCollections.observableList(this.latestCrimes.getCrimesRelativeTo());
-        table.setItems(data);
-
-        // make a scroll bar
-        ScrollPane s = new ScrollPane();
-        s.setFitToHeight(true);
-        s.setFitToWidth(true);
-        s.setContent(table);
-
-        return s;
-    }
-
-    private void setUpNewFilteredTableView(TableView<CrimeRelativeToAddress> table) {
+    private void setUpTableDesign() {
         table.setEditable(false);
 
         //set up columns
@@ -258,6 +188,14 @@ public class CrimeViewerApplication extends Application {
         table.getColumns().addAll(date, type, description, address);
     }
 
+    private void updateTableView() {
+        System.out.println("Crimes found within radius: " + this.latestCrimes.count());
+
+        ObservableList<CrimeRelativeToAddress> data =
+                FXCollections.observableList(this.latestCrimes.getCrimesRelativeTo());
+        table.setItems(data);
+    }
+
     private ScrollPane setUpSummaryView() {
         ScrollPane s = new ScrollPane();
         this.scv = new SummaryChartView(this.latestCrimes);
@@ -265,67 +203,6 @@ public class CrimeViewerApplication extends Application {
 
         s.setContent(vb);
         return s;
-    }
-
-    private Group exampleOfAChart() {
-//        TODO: FILL IN THE CORRECT INFORMATION AND VOILA!
-//         check the observableMap and figure out how to add the data
-//            ObservableMap<DayOfWeekCrime, Integer> data =
-//                    FXCollections.observableMap(this.latestCrimes.countByDayOfWeek());
-
-        //Defining the x axis
-        CategoryAxis xAxis = new CategoryAxis();
-
-        xAxis.setCategories(FXCollections.observableArrayList(DayOfWeekCrime.stringValues()));
-        xAxis.setLabel("x-axis label");
-
-        //Defining the y axis
-        NumberAxis yAxis = new NumberAxis();
-        yAxis.setLabel("y-axis label");
-
-        //Creating the Bar chart
-        BarChart<String, Number> barChartByDayOfMonth = new BarChart<>(xAxis, yAxis);
-        barChartByDayOfMonth.setTitle("Comparison between various crimes");
-
-        //Prepare XYChart.Series objects by setting data
-        XYChart.Series<String, Number> series1 = new XYChart.Series<>();
-        series1.setName("Count by Day of Week");
-
-//      TODO: adds data into the chart
-        this.latestCrimes.countByDayOfWeek().entrySet().stream()
-                .peek(System.out::println)
-                .peek(e -> System.out.println("Sup"))
-                .forEach(e -> series1.getData().add(new XYChart.Data<>(e.getKey().toString(),e.getValue())));
-       /* Arrays.asList( new XYChart.Data<>("Monday", 1.0),
-                new XYChart.Data<>("Wednesday", 3.0),
-                new XYChart.Data<>("Sunday", 4.0),
-                new XYChart.Data<>("Tuesday", 6.0))
-                .stream().forEach( v -> series1.getData().add(v));*/
-//        series1.getData().add(new XYChart.Data<>("Monday", 1.0));
-//        series1.getData().add(new XYChart.Data<>("Friday", 3.0));
-//        series1.getData().add(new XYChart.Data<>("Sunday", 4.0));
-//        series1.getData().add(new XYChart.Data<>("Tuesday", 5.0));
-
-        /*XYChart.Series<String, Number> series2 = new XYChart.Series<>();
-        series2.setName("Audi");
-        series2.getData().add(new XYChart.Data<>("John", 10.0));
-        series2.getData().add(new XYChart.Data<>("User rating", 6.0));
-
-        series2.getData().add(new XYChart.Data<>("Mari", 4.0));
-        series2.getData().add(new XYChart.Data<>("Beth", 4.0));
-
-        XYChart.Series<String, Number> series3 = new XYChart.Series<>();
-        series3.setName("Ford");
-        series3.getData().add(new XYChart.Data<>("John", 4.0));
-        series3.getData().add(new XYChart.Data<>("User rating", 2.0));
-        series3.getData().add(new XYChart.Data<>("Mari", 3.0));
-        series3.getData().add(new XYChart.Data<>("Beth", 6.0));
-*/
-
-        //Setting the data to bar chart
-        barChartByDayOfMonth.getData().addAll(series1) ; //, series2, series3);
-
-        return new Group(barChartByDayOfMonth);
     }
 
     private BorderPane createBottomMenu(BorderPane basePane) {
