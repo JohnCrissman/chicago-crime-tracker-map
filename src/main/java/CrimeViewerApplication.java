@@ -1,24 +1,14 @@
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -26,10 +16,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
@@ -127,15 +114,15 @@ public class CrimeViewerApplication extends Application {
                 execJsFunc();
 
                 //update list view
-                this.listView = setUpFilteredTableView();
+                this.listView.setContent(updateTableView());
 
                 //update summary view
                 this.scv.updateSummaryForNewAddress();
 
-                Node currentView = this.basePane.getCenter();
-                if(currentView.equals(this.listView)) {
-                    this.basePane.setCenter(this.listView);
-                }
+//                Node currentView = this.basePane.getCenter();
+//                if(currentView.equals(this.listView)) {
+//                    this.basePane.setCenter(this.listView);
+//                }
             } catch (IOException ex) {
                 System.out.println("whats up");
                 ex.printStackTrace();
@@ -174,53 +161,9 @@ public class CrimeViewerApplication extends Application {
     }
 
     private ScrollPane setUpTableView() {
-        TableView<Crime> table = new TableView<>();
-        setUpNewTableView(table);
-
-        ObservableList<Crime> data = FXCollections.observableList(this.latestCrimes.getAllCrimes());
-        table.setItems(data);
-
-        // make a scroll bar
-        ScrollPane s = new ScrollPane();
-        s.setFitToHeight(true);
-        s.setFitToWidth(true);
-        s.setContent(table);
-
-        return s;
-    }
-
-    private void setUpNewTableView(TableView<Crime> table) {
-        table.setEditable(false);
-
-        //set up columns
-        TableColumn<Crime, Date> date = new TableColumn<>("Date");
-        date.setMinWidth(100);
-        date.setCellValueFactory(new PropertyValueFactory<>("date"));
-
-        TableColumn<Crime, String> type = new TableColumn<>("Type");
-        type.setMinWidth(150);
-        type.setCellValueFactory(new PropertyValueFactory<>("type"));
-
-        TableColumn<Crime, String> description = new TableColumn<>("Description");
-        description.setMinWidth(300);
-        description.setCellValueFactory(new PropertyValueFactory<>("typeDescription"));
-
-        TableColumn<Crime, String> address = new TableColumn<>("Block");
-        address.setMinWidth(300);
-        address.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getAddress().getFullAddress()));
-
-        table.getColumns().addAll(date, type, description, address);
-    }
-
-    private ScrollPane setUpFilteredTableView() {
         TableView<CrimeRelativeToAddress> table = new TableView<>();
-        setUpNewFilteredTableView(table);
-
-        System.out.println("Crimes found in radius: " + this.latestCrimes.count());
-
-        ObservableList<CrimeRelativeToAddress> data =
-                FXCollections.observableList(this.latestCrimes.getCrimesRelativeTo());
-        table.setItems(data);
+        setUpTableDesign(table);
+        table.setPlaceholder(new Label("To get started, search for an address above!"));
 
         // make a scroll bar
         ScrollPane s = new ScrollPane();
@@ -231,7 +174,7 @@ public class CrimeViewerApplication extends Application {
         return s;
     }
 
-    private void setUpNewFilteredTableView(TableView<CrimeRelativeToAddress> table) {
+    private void setUpTableDesign(TableView<CrimeRelativeToAddress> table) {
         table.setEditable(false);
 
         //set up columns
@@ -252,6 +195,18 @@ public class CrimeViewerApplication extends Application {
         address.setCellValueFactory(c -> new SimpleStringProperty(c.getValue().getAddress().getFullAddress()));
 
         table.getColumns().addAll(date, type, description, address);
+    }
+
+    private TableView<CrimeRelativeToAddress> updateTableView() {
+        TableView<CrimeRelativeToAddress> table = (TableView<CrimeRelativeToAddress>) this.listView.getContent();
+
+        System.out.println("Crimes found within radius: " + this.latestCrimes.count());
+
+        ObservableList<CrimeRelativeToAddress> data =
+                FXCollections.observableList(this.latestCrimes.getCrimesRelativeTo());
+        table.setItems(data);
+
+        return table;
     }
 
     private ScrollPane setUpSummaryView() {
