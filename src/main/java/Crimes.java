@@ -21,7 +21,7 @@ public class Crimes {
     private Address relativeAddress;
 
     public Crimes() throws ParseException, IOException {
-        int numOfWeeks = 5;
+        int numOfWeeks = 4; //shows 4 weeks of data, i.e. 5 weeks ago to 1 week ago
         this.query(numOfWeeks);
         this.radius = 0.0;
     }
@@ -34,8 +34,10 @@ public class Crimes {
     }
 
     private String getFullURL(String url, int numOfPastWeeks){
-        LocalDateTime endOfTimeFrame = LocalDateTime.now();
+        LocalDateTime endOfTimeFrame = LocalDateTime.now().minus(1, ChronoUnit.WEEKS);
+        System.out.println(endOfTimeFrame);
         LocalDateTime beginningOfTimeFrame = endOfTimeFrame.minus(numOfPastWeeks, ChronoUnit.WEEKS);
+        System.out.println(beginningOfTimeFrame);
         String endDate = endOfTimeFrame.toString().split("\\.")[0];
         String startDate = beginningOfTimeFrame.toString().split("\\.")[0];
 
