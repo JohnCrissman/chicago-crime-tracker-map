@@ -75,11 +75,15 @@ public class SummaryChartView {
 
         //Prepare XYChart.Series objects by setting data
         XYChart.Series<String, Number> dayOfWeekUpdate = new XYChart.Series<>();
-        dayOfWeekUpdate.setName("Count by Day of Week");
-        dayOfWeekUpdate.getData().add(new XYChart.Data<>("Tuesday", Math.random()*5));
-        dayOfWeekUpdate.getData().add(new XYChart.Data<>("Wednesday", Math.random()*5));
-        dayOfWeekUpdate.getData().add(new XYChart.Data<>("Sunday", Math.random()*5));
-        dayOfWeekUpdate.getData().add(new XYChart.Data<>("Friday", Math.random()*5));
+        this.latestCrimes.countByDayOfWeek().entrySet().stream()
+                .peek(System.out::println)
+                .peek(e -> System.out.println("Sup"))
+                .forEach(e -> dayOfWeekUpdate.getData().add(new XYChart.Data<>(e.getKey().toString(),e.getValue())));
+//        dayOfWeekUpdate.setName("Count by Day of Week");
+//        dayOfWeekUpdate.getData().add(new XYChart.Data<>("Tuesday", Math.random()*5));
+//        dayOfWeekUpdate.getData().add(new XYChart.Data<>("Wednesday", Math.random()*5));
+//        dayOfWeekUpdate.getData().add(new XYChart.Data<>("Sunday", Math.random()*5));
+//        dayOfWeekUpdate.getData().add(new XYChart.Data<>("Friday", Math.random()*5));
         //Setting the data to bar chart
         this.dayOfWeekChart.getData().addAll(dayOfWeekUpdate);
 
