@@ -38,6 +38,7 @@ public class CrimeViewerApplication extends Application {
     private BorderPane basePane;
     private WebView mapView;
     private ScrollPane listView;
+    private SummaryChartView scv;
     private ScrollPane summaryView;
     private String addressSearchResult;
 
@@ -45,9 +46,12 @@ public class CrimeViewerApplication extends Application {
     public void init() {
         try{
             this.latestCrimes = new Crimes();
-        }catch (IOException | ParseException e){
+        }catch (IOException e){
+            System.out.println("You must be connected to the internet; please check your connection and try again.");
             System.out.println(e.getMessage());
-            System.exit(1);
+            System.exit(0);
+        } catch(ParseException e) {
+            e.printStackTrace();
         }
     }
 
@@ -123,17 +127,17 @@ public class CrimeViewerApplication extends Application {
                 // update map
                 execJsFunc();
 
-
                 //update list
                 this.listView = setUpFilteredTableView();
 
-                Group root = exampleOfAChart();
-                this.summaryView.setContent(root);
+                //update summary
+                this.scv.updateSummaryForNewAddress();
 
                 Node currentView = this.basePane.getCenter();
                 if(currentView.equals(this.mapView)) {
                     this.basePane.setCenter(this.mapView);
-                } else {
+                    // TODO: Figure out why listView isn't updating until you click away/back
+                } else if(currentView.equals(this.listView)) {
                     this.basePane.setCenter(this.listView);
                 }
             } catch (IOException ex) {
@@ -256,10 +260,9 @@ public class CrimeViewerApplication extends Application {
 
     private ScrollPane setUpSummaryView() {
         ScrollPane s = new ScrollPane();
-        VBox vb = new VBox();
+        this.scv = new SummaryChartView(this.latestCrimes);
+        FlowPane vb = this.scv.getViewOfCharts();
 
-        Text placeholder = new Text("Placeholder");
-        vb.getChildren().add(placeholder);
         s.setContent(vb);
         return s;
     }
@@ -273,7 +276,7 @@ public class CrimeViewerApplication extends Application {
         //Defining the x axis
         CategoryAxis xAxis = new CategoryAxis();
 
-        xAxis.setCategories(FXCollections.<String>observableArrayList(DayOfWeekCrime.stringValues()));
+        xAxis.setCategories(FXCollections.observableArrayList(DayOfWeekCrime.stringValues()));
         xAxis.setLabel("x-axis label");
 
         //Defining the y axis
@@ -334,7 +337,7 @@ public class CrimeViewerApplication extends Application {
 
         Button mapViewButton = new Button("View Map");
         Button listViewButton = new Button("View List");
-        Button summaryViewButton = new Button("View Summary");
+        Button summaryViewButton = new Button("Summary");
 
         //create View Map button
         mapViewButton.setPrefSize(100, 20);
