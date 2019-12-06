@@ -261,7 +261,7 @@ public class CrimeViewerApplication extends Application {
     private ScrollPane setUpSummaryView() {
         ScrollPane s = new ScrollPane();
         this.scv = new SummaryChartView(this.latestCrimes);
-        VBox vb = this.scv.getViewOfCharts();
+        FlowPane vb = this.scv.getViewOfCharts();
 
         s.setContent(vb);
         return s;
