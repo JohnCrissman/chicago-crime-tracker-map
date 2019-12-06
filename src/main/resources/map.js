@@ -31,7 +31,17 @@ function showCrimesOnMap(cr, centerAddress){
             mapTypeId: google.maps.MapTypeId.ROADMAP,
           };
         map = new google.maps.Map(document.getElementById("googleMap"),mapOptions);
-        
+
+        let AddressMarker = new google.maps.Marker({
+                        position: new google.maps.LatLng(addre.lat, addre.long),
+                        label: "You",
+                        icon:{
+                        		url: 'star.png'
+                        },
+                        zIndex: 0,
+                        map: map
+                    });
+
         crimes.forEach((c,i) => {
             let crimeInfo = crimeInfoWindow(c,i);
             let marker = new google.maps.Marker({
