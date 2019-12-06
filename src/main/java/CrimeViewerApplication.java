@@ -17,12 +17,10 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
-
 import static java.util.stream.Collectors.toList;
 
 public class CrimeViewerApplication extends Application {
     private Crimes latestCrimes;
-    private BorderPane basePane;
     private WebView mapView;
     private ScrollPane listView;
     private SummaryChartView scv;
@@ -44,17 +42,17 @@ public class CrimeViewerApplication extends Application {
 
     @Override
     public void start(Stage stage) {
-        this.basePane = new BorderPane();
+        BorderPane basePane = new BorderPane();
 
         HBox topMenu = createTopMenu();
-        this.basePane.setTop(topMenu);
-        BorderPane bottomMenu = createBottomMenu(this.basePane);
-        this.basePane.setBottom(bottomMenu);
+        basePane.setTop(topMenu);
+        BorderPane bottomMenu = createBottomMenu(basePane);
+        basePane.setBottom(bottomMenu);
 
         this.listView = setUpTableView();
         this.mapView = setUpMapView();
         this.summaryView = setUpSummaryView();
-        this.basePane.setCenter(this.mapView);
+        basePane.setCenter(this.mapView);
 
         Scene scene = new Scene(basePane, 1000, 700, Color.web("#666970"));
         stage.setScene(scene);
