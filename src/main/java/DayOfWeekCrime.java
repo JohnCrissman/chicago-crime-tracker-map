@@ -15,12 +15,12 @@ public enum DayOfWeekCrime implements Comparable<DayOfWeekCrime>{
     private final int dayNumber;
     private final String dayName;
 
-    DayOfWeekCrime(int n, String dayName){
+    DayOfWeekCrime(int n, String dayName) {
         this.dayNumber = n;
         this.dayName = dayName;
     }
 
-    public static DayOfWeekCrime of(int num){
+    public static DayOfWeekCrime of(int num) {
         for(DayOfWeekCrime d : DayOfWeekCrime.values()){
             if(d.dayNumber == num)
                 return d;
@@ -28,14 +28,14 @@ public enum DayOfWeekCrime implements Comparable<DayOfWeekCrime>{
         throw new IllegalArgumentException ("No such a number");
     }
 
-    public static List<String> stringValues(){
+    public static List<String> stringValues() {
         return Arrays.stream(DayOfWeekCrime.values())
                 .map(dw -> dw.dayName)
                 .collect(toList());
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return this.dayName;
     }
 }

@@ -1,9 +1,9 @@
 public class NotARadiusException extends Exception{
-        public NotARadiusException(){
+        public NotARadiusException() {
             super();
         }
 
-        public NotARadiusException(String message){
+        public NotARadiusException(String message) {
             super(message);
         }
 

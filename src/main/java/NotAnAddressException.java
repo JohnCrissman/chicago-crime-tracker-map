@@ -1,10 +1,10 @@
-public class NotAnAddressException extends Exception{
+public class NotAnAddressException extends Exception {
 
-    public NotAnAddressException(){
+    public NotAnAddressException() {
         super();
     }
 
-    public NotAnAddressException(String message){
+    public NotAnAddressException(String message) {
         super(message);
     }
 
