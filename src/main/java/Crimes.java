@@ -23,13 +23,13 @@ public class Crimes {
     }
 
     private void query(int numOfPastWeeks) throws IOException, ParseException{
-        String fullUrl = getFullURL(numOfPastWeeks);
+        String fullUrl = createFullQueryURL(numOfPastWeeks);
         System.out.println("Query: " + fullUrl);
         JSONArray jsonArr = APITalker.getArrayResponse(fullUrl, false);
         this.crimes = Crimes.createCrimeList(jsonArr);
     }
 
-    private String getFullURL(int numOfPastWeeks){
+    private String createFullQueryURL(int numOfPastWeeks){
         String url = "https://data.cityofchicago.org/resource/ijzp-q8t2.json";
         LocalDateTime endOfTimeFrame = LocalDateTime.now().minus(1, ChronoUnit.WEEKS);
         LocalDateTime beginningOfTimeFrame = endOfTimeFrame.minus(numOfPastWeeks, ChronoUnit.WEEKS);
@@ -67,14 +67,14 @@ public class Crimes {
         return listOfCrimes;
     }
 
-    private static Crime createCrime(JSONObject j, DataOutputStream log) throws IOException
+    private static Crime createCrime(JSONObject json, DataOutputStream log) throws IOException
     {
-        String sDate = (String) j.get("date");
-        String type = (String) j.get("primary_type");
-        String typeDescription = (String) j.get("description");
-        String latitude = (String) j.get("latitude");
-        String longitude = (String) j.get("longitude");
-        String block = (String) j.get("block");
+        String sDate = (String) json.get("date");
+        String type = (String) json.get("primary_type");
+        String typeDescription = (String) json.get("description");
+        String latitude = (String) json.get("latitude");
+        String longitude = (String) json.get("longitude");
+        String block = (String) json.get("block");
 
         Crime newCrime = null;
         try {
@@ -134,16 +134,15 @@ public class Crimes {
             .collect(toMap(Map.Entry::getKey, e -> e.getValue().size()));
     }
 
+
     private DayOfWeekCrime getDayOfWeek(CrimeRelativeToAddress c){
         Calendar cal = new Calendar.Builder().setInstant(c.getDate()).build();
         return DayOfWeekCrime.of(cal.get(Calendar.DAY_OF_WEEK));
     }
-
     private int getDayOfMonth(CrimeRelativeToAddress c){
         Calendar cal = new Calendar.Builder().setInstant(c.getDate()).build();
         return cal.get(Calendar.DAY_OF_MONTH);
     }
-
     public Address getRelativeAddress(){
         return this.relativeAddress;
     }

@@ -2,7 +2,6 @@ import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -26,8 +25,8 @@ public class CrimeViewerApplication extends Application {
     private Crimes latestCrimes;
     private WebView mapView;
     private ScrollPane listView;
-    private SummaryView scv;
-    private ScrollPane summaryView;
+    private SummaryView summaryView;
+    private ScrollPane summaryPane;
     private TableView<CrimeRelativeToAddress> table;
 
     @Override
@@ -58,19 +57,32 @@ public class CrimeViewerApplication extends Application {
     }
 
     private void createMainViews(BorderPane basePane) {
-        this.listView = setUpTableView();
-        this.mapView = setUpMapView();
-        this.summaryView = setUpSummaryView();
+        createTableView();
+        this.mapView = new WebView();
+        WebEngine webEngine = this.mapView.getEngine();
+
+        URL mapPage = this.getClass().getResource("map.html");
+        webEngine.load(mapPage.toString());
+        createSummaryView();
 
         basePane.setCenter(this.mapView);
     }
 
     private void createTopMenu(BorderPane basePane) {
         TopMenu topMenu = new TopMenu(basePane);
-        this.setUpSearchFunction(topMenu);
+        this.createSearchFunction(topMenu);
     }
 
-    private void setUpSearchFunction(TopMenu topMenu) {
+    private void createBottomMenu(BorderPane basePane) {
+        //set up properties for each button
+        LinkedHashMap<String, Node> menu = new LinkedHashMap<>(3);
+        menu.put("View Map", this.mapView);
+        menu.put("View List", this.listView);
+        menu.put("Summary", this.summaryPane);
+        BottomMenu bottom = new BottomMenu(basePane, menu);
+    }
+
+    private void createSearchFunction(TopMenu topMenu) {
         Button search = topMenu.getSearchButton();
         TextField addr = topMenu.getAddressSearchField();
         ChoiceBox<String> radius = topMenu.getRadiusMenu();
@@ -89,14 +101,10 @@ public class CrimeViewerApplication extends Application {
                 //update search bar to show query result
                 addr.setText(this.latestCrimes.getRelativeAddress().getFullAddress());
 
-                // update map view
                 updateMapView();
-
-                //update list view
                 updateTableView();
+                this.summaryView.updateForNewAddress();
 
-                //update summary view
-                this.scv.updateSummaryForNewAddress();
             } catch (IOException ex) {
                 ex.printStackTrace();
             } catch (NotARadiusException ex) {
@@ -108,42 +116,19 @@ public class CrimeViewerApplication extends Application {
         });
     }
 
-    private void updateMapView() {
-        String jsFunctionCall;
-        jsFunctionCall = "showCrimesOnMap('" +
-                JSONArray.toJSONString(this.latestCrimes.getCrimesRelativeTo()
-                        .stream()
-                        .limit(1000)
-                        .collect(toList())) + "', '" + this.latestCrimes.getRelativeAddress().toString() + "')";
-
-        this.mapView.getEngine().executeScript(jsFunctionCall);
-    }
-
-    private WebView setUpMapView() {
-        WebView webView = new WebView();
-        WebEngine webEngine = webView.getEngine();
-
-        URL mapPage = this.getClass().getResource("map.html");
-        webEngine.load(mapPage.toString());
-
-        return webView;
-    }
-
-    private ScrollPane setUpTableView() {
+    private void createTableView() {
         this.table = new TableView<>();
-        setUpTableDesign();
+        createTableDesign();
         this.table.setPlaceholder(new Label("To get started, search for an address above!"));
 
         // make a scroll bar
-        ScrollPane s = new ScrollPane();
-        s.setFitToHeight(true);
-        s.setFitToWidth(true);
-        s.setContent(table);
-
-        return s;
+        this.listView = new ScrollPane();
+        this.listView.setFitToHeight(true);
+        this.listView.setFitToWidth(true);
+        this.listView.setContent(table);
     }
 
-    private void setUpTableDesign() {
+    private void createTableDesign() {
         table.setEditable(false);
 
         //set up columns
@@ -166,30 +151,31 @@ public class CrimeViewerApplication extends Application {
         table.getColumns().addAll(date, type, description, address);
     }
 
+    private void createSummaryView() {
+        this.summaryPane = new ScrollPane();
+        this.summaryView = new SummaryView(this.latestCrimes);
+        FlowPane vb = this.summaryView.getViewOfCharts();
+
+        this.summaryPane.setContent(vb);
+    }
+
+    private void updateMapView() {
+        String jsFunctionCall;
+        jsFunctionCall = "showCrimesOnMap('" +
+                JSONArray.toJSONString(this.latestCrimes.getCrimesRelativeTo()
+                        .stream()
+                        .limit(1000)
+                        .collect(toList())) + "', '" + this.latestCrimes.getRelativeAddress().toString() + "')";
+
+        this.mapView.getEngine().executeScript(jsFunctionCall);
+    }
+
     private void updateTableView() {
         System.out.println("Crimes found within radius: " + this.latestCrimes.count());
 
         ObservableList<CrimeRelativeToAddress> data =
                 FXCollections.observableList(this.latestCrimes.getCrimesRelativeTo());
         table.setItems(data);
-    }
-
-    private ScrollPane setUpSummaryView() {
-        ScrollPane s = new ScrollPane();
-        this.scv = new SummaryView(this.latestCrimes);
-        FlowPane vb = this.scv.getViewOfCharts();
-
-        s.setContent(vb);
-        return s;
-    }
-
-    private void createBottomMenu(BorderPane basePane) {
-        //set up properties for each button
-        Map<String, Node> menu = new LinkedHashMap<>(3);
-        menu.put("View Map", this.mapView);
-        menu.put("View List", this.listView);
-        menu.put("Summary", this.summaryView);
-        BottomMenu bottom = new BottomMenu(basePane, menu);
     }
 
     @Override

@@ -7,11 +7,7 @@ public class CrimeRelativeToAddress extends Crime {
     }
 
     public void setProximity(Address address) {
-        this.proximity = AddressHelper.properDistanceBetweenTwoLocations(this.getAddress(), address);
-    }
-
-    public double getProximity(){
-        return this.proximity;
+        this.proximity = AddressHelper.distanceBetweenTwoLocations(this.getAddress(), address);
     }
 
     @Override
@@ -19,5 +15,4 @@ public class CrimeRelativeToAddress extends Crime {
         String crimeStr = super.toString();
         return crimeStr.substring(0,crimeStr.length()-1) + ", \"proximity\": \""+this.proximity+"\"}";
     }
-
 }

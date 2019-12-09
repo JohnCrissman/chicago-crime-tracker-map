@@ -3,6 +3,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +14,7 @@ public class BottomMenu {
     private List<Node> nodeList;
     private BorderPane fullBottomMenu;
 
-    public BottomMenu(BorderPane basePane, Map<String, Node> toAdd) {
+    public BottomMenu(BorderPane basePane, LinkedHashMap<String, Node> toAdd) {
         //create buttons
         this.buttonList = toAdd.keySet().stream()
                                         .map(Button::new)
@@ -23,7 +24,7 @@ public class BottomMenu {
         // add each button to the palette
         HBox buttonPalette = new HBox();
         for(Button b : this.buttonList) {
-            setUpAndAddButton(basePane, buttonPalette, b);
+            createAndAddButton(basePane, buttonPalette, b);
         }
 
         //disable the first button at start
@@ -40,15 +41,15 @@ public class BottomMenu {
         basePane.setBottom(this.fullBottomMenu);
     }
 
-    private void setUpAndAddButton(BorderPane basePane, HBox buttonPalette, Button b) {
-        b.setPrefSize(100, 20);
-        b.setOnAction(e -> {
-            Node showThisNode = this.nodeList.get(this.buttonList.indexOf(b));
+    private void createAndAddButton(BorderPane basePane, HBox buttonPalette, Button button) {
+        button.setPrefSize(100, 20);
+        button.setOnAction(e -> {
+            Node showThisNode = this.nodeList.get(this.buttonList.indexOf(button));
             basePane.setCenter(showThisNode);
             this.buttonList.forEach(btn -> btn.setDisable(false));
-            b.setDisable(true);
+            button.setDisable(true);
         });
-        buttonPalette.getChildren().add(b);
+        buttonPalette.getChildren().add(button);
     }
 
     private Button createExitButton() {
@@ -61,9 +62,5 @@ public class BottomMenu {
                 System.out.println("Unable to quit program normally.");
             } } );
         return exitProgramButton;
-    }
-
-    public BorderPane getFullBottomMenu() {
-        return fullBottomMenu;
     }
 }

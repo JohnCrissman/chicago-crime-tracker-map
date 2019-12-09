@@ -7,13 +7,7 @@ import java.nio.charset.StandardCharsets;
 public final class AddressHelper {
     private AddressHelper() {}
 
-//    public static double distanceBetweenTwoLocations(Address add1, Address add2){
-//        double xDelta = add1.getLongInMiles() - add2.getLongInMiles();
-//        double yDelta = add1.getLatInMiles() - add2.getLatInMiles();
-//        return Math.sqrt(Math.pow(xDelta, 2) + Math.pow(yDelta, 2));
-//    }
-
-    public static double properDistanceBetweenTwoLocations(Address add1, Address add2){
+    public static double distanceBetweenTwoLocations(Address add1, Address add2) {
         double lat1 = add1.getLatitude();
         double lat2 = add2.getLatitude();
         double lon1 = add1.getLongitude();
@@ -29,19 +23,19 @@ public final class AddressHelper {
                 Math.cos(phi1) * Math.cos(phi2) *
                         Math.sin(lambda/2) * Math.sin(lambda/2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        //System.out.println(R*c);
+
         return  R * c ;
     }
 
-    public static boolean isWithinRadius(Address add1, Address add2, Double radius){
-        double distance = properDistanceBetweenTwoLocations(add1, add2);
-        boolean result = distance < radius;
-        return result;
+    public static boolean isWithinRadius(Address add1, Address add2, Double radius) {
+        double distance = distanceBetweenTwoLocations(add1, add2);
+        return distance < radius;
     }
 
-    public static Address getAddressFromGoogleAPI(String address) throws NotAnAddressException, IOException {
+    public static Address getAddressFromGoogleAPI(String addressString) throws NotAnAddressException, IOException {
         String googleApiKey = "AIzaSyCN7hTS17iGOG-yLy7lBknC5TcCUCHq7Qo";
-        String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + URLEncoder.encode(address, StandardCharsets.UTF_8) + "&key=" + googleApiKey;
+        String url = "https://maps.googleapis.com/maps/api/geocode/json?address=" +
+                URLEncoder.encode(addressString, StandardCharsets.UTF_8) + "&key=" + googleApiKey;
 
         JSONObject jobj = APITalker.getObjectResponse(url, false);
 
@@ -56,7 +50,7 @@ public final class AddressHelper {
             return new Address(latitude, longitude, block);
         }
         catch (Exception e) {
-            throw new NotAnAddressException("Not valid address:" + address);
+            throw new NotAnAddressException("Not valid address:" + addressString);
         }
     }
 

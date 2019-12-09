@@ -19,16 +19,16 @@ public class SummaryView {
         this.latestCrimes = latestCrimes;
         this.viewOfCharts = new FlowPane();
 
-        this.dayOfWeekChart = this.setUpChart("Crimes by day of week",
+        this.dayOfWeekChart = this.createChart("Crimes by day of week",
                                 DayOfWeekCrime.stringValues());
-        this.dayOfMonthChart = this.setUpChart("Crimes by day of month",
+        this.dayOfMonthChart = this.createChart("Crimes by day of month",
                                 Stream.iterate(1, x -> x + 1).limit(31).map(String::valueOf).collect(toList()));
-        this.typeOfCrimeChart = this.setUpChart("Number of each type of crime",
+        this.typeOfCrimeChart = this.createChart("Number of each type of crime",
                                 null);
     }
 
-    private BarChart<String, Number> setUpChart(String title,
-                                                List<String> xCategories) {
+    private BarChart<String, Number> createChart(String title,
+                                                 List<String> xCategories) {
         //Defining the axes
         CategoryAxis xAxis = new CategoryAxis();
         if (xCategories != null) {
@@ -46,7 +46,7 @@ public class SummaryView {
         return currentChart;
     }
 
-    public void updateSummaryForNewAddress() {
+    public void updateForNewAddress() {
         this.dayOfWeekChart.getData().clear();
         this.dayOfMonthChart.getData().clear();
         this.typeOfCrimeChart.getData().clear();

@@ -10,11 +10,11 @@ public class Crime {
 
     // constructor for createCrime() in Crimes class.
     public Crime(String type, String typeDescription, String latitude,
-                 String longitude, String date, String block) throws ParseException {
+                 String longitude, String dateAsString, String blockAddress) throws ParseException {
         this.type = type;
         this.typeDescription = typeDescription;
         this.address = new Address(Double.parseDouble(latitude),
-                Double.parseDouble(longitude), block);
+                Double.parseDouble(longitude), blockAddress);
         // TODO: use this try-catch to look for lat/long by block -- however,
         //  it takes a LONG time!! :( and some results return "Chicago, IL USA" which should then be discarded
         /*try {
@@ -30,14 +30,14 @@ public class Crime {
                 e.printStackTrace();
             }
         }*/
-        this.date = convertDate(date);
+        this.date = convertDate(dateAsString);
     }
 
     // constructor given an address object
-    public Crime(String type, String typeDescription, Date date, Address address) {
+    public Crime(String type, String typeDescription, Date dateAsString, Address address) {
         this.type = type;
         this.typeDescription = typeDescription;
-        this.date = date;
+        this.date = dateAsString;
         this.address = address;
     }
 
