@@ -29,7 +29,7 @@ public class TopMenu {
     }
 
     private void createAddressSearch() {
-        this.addressSearchField = new javafx.scene.control.TextField("5500 N St Louis Ave");
+        this.addressSearchField = new TextField("5500 N St Louis Ave");
         this.addressSearchField.setPrefWidth(400);
     }
 
